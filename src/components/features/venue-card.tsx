@@ -2,19 +2,19 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { MapPin, Star, ArrowRight } from "lucide-react";
+import { MapPin, Star, Clock, Users, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import type { Venue } from "@/types";
 
-// Sport badge colors like ayo.co.id
+// Sport badge styles with gradients
 const sportBadgeStyles: Record<string, string> = {
-    futsal: "bg-green-50 text-green-700",
-    badminton: "bg-blue-50 text-blue-700",
-    basketball: "bg-orange-50 text-orange-700",
-    tennis: "bg-pink-50 text-pink-700",
-    default: "bg-gray-50 text-gray-700",
+    futsal: "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white",
+    badminton: "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
+    basketball: "bg-gradient-to-r from-orange-500 to-orange-600 text-white",
+    tennis: "bg-gradient-to-r from-pink-500 to-pink-600 text-white",
+    default: "bg-gradient-to-r from-[#344D7A] to-[#4A6699] text-white",
 };
 
 interface VenueCardProps {
@@ -22,59 +22,78 @@ interface VenueCardProps {
 }
 
 export function VenueCard({ venue }: VenueCardProps) {
-    const imageUrl = venue.images?.[0] || "https://placehold.co/400x300/f3f4f6/9ca3af?text=Venue";
+    const imageUrl = venue.images?.[0] || "https://placehold.co/400x300/f7f8fa/5a6a7e?text=Venue";
     const sportType = venue.venueType?.toLowerCase() || "default";
     const badgeStyle = sportBadgeStyles[sportType] || sportBadgeStyles.default;
 
     return (
         <Link href={`/venues/${venue.id}`}>
-            <Card hover className="overflow-hidden h-full">
+            <Card hover variant="elevated" className="overflow-hidden h-full group">
                 {/* Image */}
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-[16/10] overflow-hidden">
                     <img
                         src={imageUrl}
                         alt={venue.name}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
                     {/* Sport Badge */}
                     {venue.venueType && (
-                        <div className="absolute top-3 left-3">
-                            <span className={`px-2 py-1 rounded text-xs font-semibold uppercase ${badgeStyle}`}>
+                        <div className="absolute top-4 left-4">
+                            <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase shadow-lg ${badgeStyle}`}>
                                 {venue.venueType}
                             </span>
                         </div>
                     )}
+
+                    {/* Quick View Button */}
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                            <ArrowUpRight className="h-5 w-5 text-[#344D7A]" />
+                        </span>
+                    </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-4 space-y-3">
+                <div className="p-5">
                     {/* Location */}
-                    <div className="flex items-center text-gray-500 text-sm">
-                        <MapPin className="h-4 w-4 mr-1" />
+                    <div className="flex items-center text-[#5A6A7E] text-sm mb-2">
+                        <MapPin className="h-4 w-4 mr-1.5 text-[#F5B800]" />
                         <span className="truncate">{venue.city || "Jakarta"}</span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-bold text-gray-900 line-clamp-2 leading-tight">
+                    <h3 className="font-bold text-[#1A2744] text-lg line-clamp-2 leading-tight mb-3 group-hover:text-[#344D7A] transition-colors">
                         {venue.name}
                     </h3>
 
-                    {/* Rating */}
-                    <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                        <span className="text-sm font-semibold text-gray-900">4.8</span>
-                        <span className="text-sm text-gray-400">(128)</span>
+                    {/* Meta Info */}
+                    <div className="flex items-center justify-between text-sm mb-4">
+                        <div className="flex items-center space-x-1">
+                            <Star className="h-4 w-4 text-[#F5B800] fill-[#F5B800]" />
+                            <span className="font-semibold text-[#1A2744]">4.8</span>
+                            <span className="text-[#8A95A5]">(128)</span>
+                        </div>
+                        <div className="flex items-center text-[#5A6A7E]">
+                            <Users className="h-4 w-4 mr-1" />
+                            <span>Max {venue.capacity}</span>
+                        </div>
                     </div>
 
                     {/* Price */}
-                    <div className="pt-3 border-t border-gray-100">
-                        <p className="text-xs text-gray-400 mb-0.5">Mulai dari</p>
-                        <div className="flex items-baseline space-x-1">
-                            <span className="text-lg font-bold text-gray-900">
+                    <div className="pt-4 border-t border-[#E4E8ED] flex items-center justify-between">
+                        <div>
+                            <p className="text-[#8A95A5] text-xs mb-0.5">Mulai dari</p>
+                            <p className="text-xl font-bold text-[#344D7A]">
                                 {formatCurrency(venue.pricePerHour)}
-                            </span>
-                            <span className="text-gray-400 text-sm">/sesi</span>
+                                <span className="text-[#8A95A5] text-sm font-normal">/jam</span>
+                            </p>
                         </div>
+                        <Button variant="accent" size="sm">
+                            Booking
+                        </Button>
                     </div>
                 </div>
             </Card>
@@ -151,18 +170,33 @@ export function FeaturedVenuesSection({ venues = [] }: FeaturedVenuesSectionProp
     const displayVenues = venues.length > 0 ? venues : mockVenues;
 
     return (
-        <section className="bg-gray-50 py-16">
+        <section className="py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900">Venue Populer</h2>
-                        <p className="text-gray-500 mt-1">Rekomendasi venue terbaik untuk kamu</p>
+                        <motion.span
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-3"
+                        >
+                            ✨ Venue Populer
+                        </motion.span>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="text-3xl font-bold text-[#1A2744]"
+                        >
+                            Rekomendasi Venue Terbaik
+                        </motion.h2>
                     </div>
                     <Link href="/venues">
-                        <Button variant="outline" size="sm">
-                            Lihat Semua
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                        <Button variant="outline">
+                            Lihat Semua Venue
+                            <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Button>
                     </Link>
                 </div>
@@ -172,7 +206,7 @@ export function FeaturedVenuesSection({ venues = [] }: FeaturedVenuesSectionProp
                     {displayVenues.slice(0, 4).map((venue, index) => (
                         <motion.div
                             key={venue.id}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
