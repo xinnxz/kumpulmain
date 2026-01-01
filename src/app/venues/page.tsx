@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, MapPin, Filter, X, Loader2 } from "lucide-react";
+import { Search, MapPin, Filter, X, Loader2, SlidersHorizontal } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { VenueCard } from "@/components/features/venue-card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { venuesApi } from "@/lib/api";
 import type { Venue } from "@/types";
 
@@ -19,7 +18,6 @@ export default function VenuesPage() {
     const [selectedType, setSelectedType] = useState("");
     const [cities, setCities] = useState<string[]>([]);
     const [types, setTypes] = useState<string[]>([]);
-    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
         fetchVenues();
@@ -72,67 +70,36 @@ export default function VenuesPage() {
     const hasActiveFilters = search || selectedCity || selectedType;
 
     return (
-        <main className="min-h-screen bg-slate-950">
+        <main className="min-h-screen bg-gray-50">
             <Navbar />
 
             {/* Header */}
-            <section className="pt-24 pb-12 bg-gradient-to-b from-slate-900 to-slate-950">
+            <section className="pt-20 pb-6 bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center max-w-3xl mx-auto"
-                    >
-                        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                            Temukan Lapangan{" "}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                                Favoritmu
-                            </span>
-                        </h1>
-                        <p className="text-slate-400 text-lg">
-                            Cari dan booking lapangan untuk berbagai olahraga di kotamu
-                        </p>
-                    </motion.div>
+                    <div className="py-6">
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Cari Venue</h1>
+                        <p className="text-gray-500">Temukan venue olahraga terbaik di kotamu</p>
+                    </div>
 
-                    {/* Search Bar */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="mt-8 max-w-2xl mx-auto"
-                    >
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                    {/* Search & Filters */}
+                    <div className="flex flex-col md:flex-row gap-3">
+                        {/* Search */}
+                        <div className="flex-1 relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Cari nama lapangan atau alamat..."
+                                placeholder="Cari nama venue..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                                className="w-full h-12 pl-12 pr-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#A30D2D] focus:ring-1 focus:ring-[#A30D2D] outline-none transition-all"
                             />
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-2 top-1/2 -translate-y-1/2 md:hidden"
-                                onClick={() => setShowFilters(!showFilters)}
-                            >
-                                <Filter className="h-5 w-5" />
-                            </Button>
                         </div>
-                    </motion.div>
 
-                    {/* Filters */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className={`mt-6 flex flex-wrap gap-3 justify-center ${showFilters ? "block" : "hidden md:flex"}`}
-                    >
                         {/* City Filter */}
                         <select
                             value={selectedCity}
                             onChange={(e) => setSelectedCity(e.target.value)}
-                            className="h-10 px-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 focus:border-emerald-500 outline-none transition-all cursor-pointer"
+                            className="h-12 px-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 focus:border-[#A30D2D] outline-none cursor-pointer min-w-[150px]"
                         >
                             <option value="">Semua Kota</option>
                             {cities.map((city) => (
@@ -144,7 +111,7 @@ export default function VenuesPage() {
                         <select
                             value={selectedType}
                             onChange={(e) => setSelectedType(e.target.value)}
-                            className="h-10 px-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 focus:border-emerald-500 outline-none transition-all cursor-pointer"
+                            className="h-12 px-4 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 focus:border-[#A30D2D] outline-none cursor-pointer min-w-[150px]"
                         >
                             <option value="">Semua Jenis</option>
                             {types.map((type) => (
@@ -153,29 +120,29 @@ export default function VenuesPage() {
                         </select>
 
                         {hasActiveFilters && (
-                            <Button variant="ghost" size="sm" onClick={clearFilters}>
+                            <Button variant="ghost" onClick={clearFilters} className="h-12">
                                 <X className="h-4 w-4 mr-1" />
-                                Clear
+                                Reset
                             </Button>
                         )}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
             {/* Results */}
-            <section className="py-12">
+            <section className="py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Results Count */}
-                    <div className="flex items-center justify-between mb-8">
-                        <p className="text-slate-400">
-                            {loading ? "Memuat..." : `${venues.length} lapangan ditemukan`}
+                    <div className="flex items-center justify-between mb-6">
+                        <p className="text-gray-600 text-sm">
+                            {loading ? "Memuat..." : `Menampilkan ${venues.length} venue`}
                         </p>
                     </div>
 
                     {/* Grid */}
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
-                            <Loader2 className="h-8 w-8 text-emerald-500 animate-spin" />
+                            <Loader2 className="h-8 w-8 text-[#A30D2D] animate-spin" />
                         </div>
                     ) : venues.length > 0 ? (
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -191,10 +158,10 @@ export default function VenuesPage() {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20">
-                            <MapPin className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-white mb-2">Tidak ada lapangan ditemukan</h3>
-                            <p className="text-slate-400 mb-6">Coba ubah filter atau kata kunci pencarian</p>
+                        <div className="text-center py-20 bg-white rounded-xl border border-gray-100">
+                            <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">Tidak ada venue ditemukan</h3>
+                            <p className="text-gray-500 mb-6">Coba ubah filter atau kata kunci pencarian</p>
                             <Button onClick={clearFilters}>Reset Filter</Button>
                         </div>
                     )}

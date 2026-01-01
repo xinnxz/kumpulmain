@@ -2,25 +2,25 @@ import { cn } from "@/lib/utils";
 import { HTMLAttributes, forwardRef } from "react";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-    variant?: "default" | "glass" | "gradient";
     hover?: boolean;
+    variant?: "default" | "elevated" | "bordered";
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-    ({ className, variant = "default", hover = false, ...props }, ref) => {
+    ({ className, hover = false, variant = "default", ...props }, ref) => {
         const variants = {
-            default: "bg-slate-900/80 border border-slate-800",
-            glass: "bg-slate-900/50 backdrop-blur-xl border border-slate-700/50",
-            gradient: "bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700",
+            default: "bg-white border border-[#E4E8ED]",
+            elevated: "bg-white shadow-lg shadow-[#344D7A]/5",
+            bordered: "bg-white border-2 border-[#344D7A]/10",
         };
 
         return (
             <div
                 ref={ref}
                 className={cn(
-                    "rounded-2xl p-6 transition-all duration-300",
+                    "rounded-2xl transition-all duration-300",
                     variants[variant],
-                    hover && "hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 cursor-pointer hover:-translate-y-1",
+                    hover && "cursor-pointer card-hover-lift hover:border-[#F5B800]/50",
                     className
                 )}
                 {...props}
@@ -33,35 +33,35 @@ Card.displayName = "Card";
 
 const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     ({ className, ...props }, ref) => (
-        <div ref={ref} className={cn("flex flex-col space-y-1.5 pb-4", className)} {...props} />
+        <div ref={ref} className={cn("p-6 pb-0", className)} {...props} />
     )
 );
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
     ({ className, ...props }, ref) => (
-        <h3 ref={ref} className={cn("text-xl font-bold text-white", className)} {...props} />
+        <h3 ref={ref} className={cn("text-lg font-bold text-[#1A2744]", className)} {...props} />
     )
 );
 CardTitle.displayName = "CardTitle";
 
 const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
     ({ className, ...props }, ref) => (
-        <p ref={ref} className={cn("text-sm text-slate-400", className)} {...props} />
+        <p ref={ref} className={cn("text-sm text-[#5A6A7E]", className)} {...props} />
     )
 );
 CardDescription.displayName = "CardDescription";
 
 const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     ({ className, ...props }, ref) => (
-        <div ref={ref} className={cn("", className)} {...props} />
+        <div ref={ref} className={cn("p-6", className)} {...props} />
     )
 );
 CardContent.displayName = "CardContent";
 
 const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     ({ className, ...props }, ref) => (
-        <div ref={ref} className={cn("flex items-center pt-4", className)} {...props} />
+        <div ref={ref} className={cn("p-6 pt-0 flex items-center", className)} {...props} />
     )
 );
 CardFooter.displayName = "CardFooter";

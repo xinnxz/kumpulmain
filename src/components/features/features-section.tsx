@@ -1,99 +1,65 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, CreditCard, Users, MessageCircle, Calendar, Shield } from "lucide-react";
+import { Search, Calendar, Users, CreditCard, Shield, MessageCircle } from "lucide-react";
 
 const features = [
     {
         icon: Search,
-        title: "Cari Lapangan Mudah",
-        description: "Temukan lapangan terdekat dengan filter lokasi, tipe olahraga, dan harga.",
+        title: "Cari Venue",
+        description: "Temukan venue olahraga terdekat dengan filter lokasi dan jenis.",
+        color: "bg-blue-50 text-blue-600",
     },
     {
         icon: Calendar,
-        title: "Booking Real-Time",
-        description: "Lihat ketersediaan slot secara real-time dan booking langsung tanpa konfirmasi manual.",
+        title: "Booking Online",
+        description: "Booking langsung online tanpa perlu telepon atau datang ke lokasi.",
+        color: "bg-green-50 text-green-600",
     },
     {
         icon: Users,
-        title: "Main Bareng (Joinan)",
-        description: "Buat undangan atau join undangan orang lain. Bayar sesuai bagian masing-masing!",
+        title: "Main Bareng",
+        description: "Buat atau join undangan main bareng dengan pemain lain.",
+        color: "bg-purple-50 text-purple-600",
     },
     {
         icon: CreditCard,
-        title: "Split Payment",
-        description: "Patungan bayar lapangan dengan teman. Setiap orang bayar bagiannya sendiri.",
-    },
-    {
-        icon: MessageCircle,
-        title: "Chat Real-Time",
-        description: "Diskusi dengan peserta lain dan pengelola lapangan langsung di aplikasi.",
-    },
-    {
-        icon: Shield,
-        title: "Pembayaran Aman",
-        description: "Transaksi dijamin aman dengan payment gateway terpercaya (Midtrans).",
+        title: "Bayar Mudah",
+        description: "Pembayaran online yang aman dan mudah via berbagai metode.",
+        color: "bg-orange-50 text-orange-600",
     },
 ];
 
 export function FeaturesSection() {
     return (
-        <section className="py-24 bg-slate-950 relative">
-            <div className="absolute inset-0">
-                <div className="absolute top-0 left-1/2 w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 bg-emerald-500/10 rounded-full blur-[120px]" />
-            </div>
-
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="bg-white py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-emerald-400 font-semibold mb-4"
-                    >
-                        FITUR LENGKAP
-                    </motion.p>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-3xl sm:text-4xl font-bold text-white mb-6"
-                    >
-                        Semua yang Kamu Butuhkan untuk{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                            Main Bareng
-                        </span>
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="text-slate-400 text-lg"
-                    >
-                        Platform lengkap untuk booking lapangan dan cari partner main. Dari pencarian sampai pembayaran,
-                        semua bisa dilakukan dalam satu aplikasi.
-                    </motion.p>
+                <div className="text-center max-w-2xl mx-auto mb-12">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                        Kenapa KumpulMain?
+                    </h2>
+                    <p className="text-gray-500">
+                        Platform booking lapangan yang memudahkan aktivitas olahragamu
+                    </p>
                 </div>
 
-                {/* Features Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Grid */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {features.map((feature, index) => (
                         <motion.div
                             key={feature.title}
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className="group bg-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300"
+                            className="text-center p-6"
                         >
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                                <feature.icon className="h-7 w-7 text-white" />
+                            <div className={`w-14 h-14 rounded-xl ${feature.color} flex items-center justify-center mx-auto mb-4`}>
+                                <feature.icon className="h-7 w-7" />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                            <p className="text-slate-400 leading-relaxed">{feature.description}</p>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
                         </motion.div>
                     ))}
                 </div>
