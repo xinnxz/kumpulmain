@@ -30,7 +30,8 @@ export function Footer() {
                     {/* Brand */}
                     <div className="space-y-5">
                         <Link href="/" className="flex items-center space-x-3">
-                            <div className="relative w-10 h-10">
+                            {/* Logo with white background for dark section */}
+                            <div className="relative w-12 h-12 bg-white rounded-xl p-1.5">
                                 <Image
                                     src="/logo.png"
                                     alt="KumpulMain"

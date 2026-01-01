@@ -174,14 +174,16 @@ export default function LoginPage() {
                 <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F5B800]/5 rounded-full blur-3xl" />
 
                 <div className="relative text-center max-w-md">
-                    {/* Logo */}
-                    <div className="w-24 h-24 mx-auto mb-8 relative">
-                        <Image
-                            src="/logo.png"
-                            alt="KumpulMain"
-                            fill
-                            className="object-contain drop-shadow-2xl"
-                        />
+                    {/* Logo with white background */}
+                    <div className="w-28 h-28 mx-auto mb-8 bg-white rounded-2xl p-3 shadow-2xl">
+                        <div className="relative w-full h-full">
+                            <Image
+                                src="/logo.png"
+                                alt="KumpulMain"
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
                     </div>
 
                     <h2 className="text-3xl font-bold text-white mb-4">

@@ -1,95 +1,103 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Calendar, Users, CreditCard, ArrowRight } from "lucide-react";
+import { Search, Calendar, Users, CreditCard, CheckCircle } from "lucide-react";
 
 const steps = [
     {
-        step: "01",
+        number: "01",
         icon: Search,
-        title: "Cari Lapangan",
-        description: "Temukan lapangan favorit berdasarkan lokasi, tipe olahraga, atau harga.",
+        title: "Cari Venue",
+        description: "Temukan venue olahraga yang sesuai dengan lokasi dan preferensi kamu.",
+        color: "from-blue-500 to-blue-600",
     },
     {
-        step: "02",
+        number: "02",
         icon: Calendar,
-        title: "Pilih Waktu",
-        description: "Lihat slot yang tersedia dan pilih waktu yang sesuai dengan jadwalmu.",
+        title: "Pilih Jadwal",
+        description: "Pilih tanggal dan jam yang tersedia sesuai kebutuhanmu.",
+        color: "from-[#F5B800] to-[#D9A300]",
     },
     {
-        step: "03",
-        icon: Users,
-        title: "Buat atau Join",
-        description: "Booking sendiri atau buat undangan main bareng. Bisa juga join undangan orang lain!",
-    },
-    {
-        step: "04",
+        number: "03",
         icon: CreditCard,
-        title: "Bayar & Main",
-        description: "Bayar online, dapat konfirmasi instant, dan siap main di lapangan!",
+        title: "Bayar Online",
+        description: "Lakukan pembayaran dengan aman melalui berbagai metode.",
+        color: "from-emerald-500 to-emerald-600",
+    },
+    {
+        number: "04",
+        icon: CheckCircle,
+        title: "Main!",
+        description: "Datang ke venue dan tunjukkan bukti booking. Selamat bermain!",
+        color: "from-[#344D7A] to-[#4A6699]",
     },
 ];
 
 export function HowItWorksSection() {
     return (
-        <section className="py-24 bg-slate-900 relative overflow-hidden">
-            {/* Background */}
-            <div className="absolute inset-0">
-                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px]" />
-            </div>
-
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                    <motion.span
+                        initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-emerald-400 font-semibold mb-4"
+                        className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4"
                     >
-                        CARA KERJA
-                    </motion.p>
+                        📋 Cara Kerja
+                    </motion.span>
                     <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-3xl sm:text-4xl font-bold text-white mb-6"
+                        className="text-3xl sm:text-4xl font-bold text-[#1A2744] mb-4"
                     >
-                        Booking Lapangan dalam{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                            4 Langkah Mudah
-                        </span>
+                        Booking Dalam 4 Langkah
                     </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="text-[#5A6A7E] text-lg"
+                    >
+                        Proses booking yang super mudah dan cepat
+                    </motion.p>
                 </div>
 
                 {/* Steps */}
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {steps.map((item, index) => (
+                    {steps.map((step, index) => (
                         <motion.div
-                            key={item.step}
+                            key={step.number}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.15 }}
+                            transition={{ delay: index * 0.1 }}
                             className="relative"
                         >
                             {/* Connector Line */}
                             {index < steps.length - 1 && (
-                                <div className="hidden lg:block absolute top-10 left-[60%] w-full h-0.5 bg-gradient-to-r from-slate-700 to-transparent z-0" />
+                                <div className="hidden lg:block absolute top-10 left-[60%] w-full h-0.5 bg-gradient-to-r from-[#E4E8ED] to-transparent" />
                             )}
 
-                            <div className="relative z-10 text-center">
-                                {/* Step Number */}
-                                <div className="text-6xl font-bold text-slate-800 mb-4">{item.step}</div>
-
-                                {/* Icon */}
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-500/20">
-                                    <item.icon className="h-8 w-8 text-white" />
+                            <div className="relative bg-white rounded-2xl p-6 border border-[#E4E8ED] hover:border-[#F5B800]/50 hover:shadow-lg hover:shadow-[#344D7A]/5 transition-all duration-300">
+                                {/* Number Badge */}
+                                <div className="absolute -top-4 -left-2">
+                                    <span className="text-6xl font-bold text-[#F7F8FA]">{step.number}</span>
                                 </div>
 
-                                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed">{item.description}</p>
+                                {/* Icon */}
+                                <div className={`relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 shadow-lg`}>
+                                    <step.icon className="h-8 w-8 text-white" />
+                                </div>
+
+                                {/* Content */}
+                                <h3 className="text-xl font-bold text-[#1A2744] mb-2">{step.title}</h3>
+                                <p className="text-[#5A6A7E] text-sm leading-relaxed">{step.description}</p>
                             </div>
                         </motion.div>
                     ))}

@@ -4,12 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Bell } from "lucide-react";
+import { Menu, X, User, ChevronDown, Bell, LogOut, Settings, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
 
 export function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
     const { user, isAuthenticated, logout } = useAuthStore();
 
     const navLinks = [
@@ -23,6 +24,12 @@ export function Navbar() {
         if (user.role === "ADMIN") return "/admin";
         if (user.role === "PENGELOLA") return "/pengelola";
         return "/dashboard";
+    };
+
+    const handleLogout = () => {
+        logout();
+        setUserMenuOpen(false);
+        window.location.href = "/";
     };
 
     return (
@@ -67,16 +74,63 @@ export function Navbar() {
                                     <Bell className="h-5 w-5" />
                                     <span className="absolute top-1 right-1 w-2 h-2 bg-[#F5B800] rounded-full" />
                                 </Link>
-                                <Link href={getDashboardLink()}>
-                                    <button className="flex items-center space-x-2 px-4 py-2 rounded-xl hover:bg-[#F7F8FA] text-[#344D7A] text-sm font-medium transition-colors">
+
+                                {/* User Dropdown */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setUserMenuOpen(!userMenuOpen)}
+                                        className="flex items-center space-x-2 px-4 py-2 rounded-xl hover:bg-[#F7F8FA] text-[#344D7A] text-sm font-medium transition-colors"
+                                    >
                                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F5B800] to-[#FFD740] flex items-center justify-center">
                                             <span className="text-[#344D7A] font-bold text-sm">
                                                 {user?.name?.charAt(0)}
                                             </span>
                                         </div>
                                         <span>{user?.name?.split(" ")[0]}</span>
+                                        <ChevronDown className={`h-4 w-4 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
                                     </button>
-                                </Link>
+
+                                    <AnimatePresence>
+                                        {userMenuOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 10 }}
+                                                className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl shadow-[#344D7A]/10 border border-[#E4E8ED] py-2 z-50"
+                                            >
+                                                <div className="px-4 py-3 border-b border-[#E4E8ED]">
+                                                    <p className="text-sm font-semibold text-[#1A2744]">{user?.name}</p>
+                                                    <p className="text-xs text-[#5A6A7E]">{user?.email}</p>
+                                                </div>
+                                                <Link
+                                                    href={getDashboardLink()}
+                                                    onClick={() => setUserMenuOpen(false)}
+                                                    className="flex items-center space-x-3 px-4 py-3 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors"
+                                                >
+                                                    <Calendar className="h-4 w-4" />
+                                                    <span className="text-sm">Dashboard</span>
+                                                </Link>
+                                                <Link
+                                                    href="/settings"
+                                                    onClick={() => setUserMenuOpen(false)}
+                                                    className="flex items-center space-x-3 px-4 py-3 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors"
+                                                >
+                                                    <Settings className="h-4 w-4" />
+                                                    <span className="text-sm">Pengaturan</span>
+                                                </Link>
+                                                <div className="border-t border-[#E4E8ED] mt-2 pt-2">
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="flex items-center space-x-3 px-4 py-3 text-red-500 hover:bg-red-50 w-full transition-colors"
+                                                    >
+                                                        <LogOut className="h-4 w-4" />
+                                                        <span className="text-sm font-medium">Keluar</span>
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </>
                         ) : (
                             <>
@@ -99,6 +153,14 @@ export function Navbar() {
                     </button>
                 </div>
             </div>
+
+            {/* Click outside to close user menu */}
+            {userMenuOpen && (
+                <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setUserMenuOpen(false)}
+                />
+            )}
 
             {/* Mobile Menu */}
             <AnimatePresence>
@@ -126,7 +188,12 @@ export function Navbar() {
                                         <Link href={getDashboardLink()} onClick={() => setMobileMenuOpen(false)}>
                                             <Button className="w-full" variant="secondary">Dashboard</Button>
                                         </Link>
-                                        <Button className="w-full" variant="outline" onClick={() => { logout(); setMobileMenuOpen(false); }}>
+                                        <Button
+                                            className="w-full"
+                                            variant="outline"
+                                            onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                                        >
+                                            <LogOut className="h-4 w-4 mr-2" />
                                             Keluar
                                         </Button>
                                     </>
