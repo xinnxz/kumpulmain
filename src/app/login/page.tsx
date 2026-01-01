@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, Trophy, Star, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
@@ -42,7 +43,7 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gray-50 flex">
+        <main className="min-h-screen bg-[#F7F8FA] flex">
             {/* Left - Form */}
             <div className="flex-1 flex items-center justify-center p-8">
                 <motion.div
@@ -51,56 +52,62 @@ export default function LoginPage() {
                     className="w-full max-w-md"
                 >
                     {/* Logo */}
-                    <Link href="/" className="flex items-center space-x-2 mb-8">
-                        <div className="w-10 h-10 rounded-lg bg-[#A30D2D] flex items-center justify-center">
-                            <span className="text-xl font-bold text-white">K</span>
+                    <Link href="/" className="flex items-center space-x-3 mb-10">
+                        <div className="relative w-12 h-12">
+                            <Image
+                                src="/logo.png"
+                                alt="KumpulMain"
+                                fill
+                                className="object-contain"
+                            />
                         </div>
-                        <span className="text-xl font-bold text-gray-900">
-                            Kumpul<span className="text-[#A30D2D]">Main</span>
+                        <span className="text-2xl font-bold">
+                            <span className="text-[#344D7A]">Kumpul</span>
+                            <span className="text-[#F5B800]">Main</span>
                         </span>
                     </Link>
 
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Masuk ke akun</h1>
-                    <p className="text-gray-500 mb-8">Selamat datang kembali! Silakan masuk.</p>
+                    <h1 className="text-3xl font-bold text-[#1A2744] mb-2">Selamat Datang!</h1>
+                    <p className="text-[#5A6A7E] mb-8">Masuk untuk mulai booking dan main bareng</p>
 
                     {error && (
-                        <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm">
+                        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <label className="block text-sm font-semibold text-[#1A2744] mb-2">Email</label>
                             <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#8A95A5]" />
                                 <input
                                     type="email"
                                     placeholder="nama@email.com"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full h-12 pl-12 pr-4 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#A30D2D] focus:ring-1 focus:ring-[#A30D2D] outline-none"
+                                    className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-[#E4E8ED] text-[#1A2744] placeholder:text-[#8A95A5] focus:border-[#F5B800] focus:ring-2 focus:ring-[#F5B800]/20 outline-none transition-all"
                                     required
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <label className="block text-sm font-semibold text-[#1A2744] mb-2">Password</label>
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#8A95A5]" />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Masukkan password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full h-12 pl-12 pr-12 rounded-lg bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#A30D2D] focus:ring-1 focus:ring-[#A30D2D] outline-none"
+                                    className="w-full h-12 pl-12 pr-12 rounded-xl bg-white border border-[#E4E8ED] text-[#1A2744] placeholder:text-[#8A95A5] focus:border-[#F5B800] focus:ring-2 focus:ring-[#F5B800]/20 outline-none transition-all"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8A95A5] hover:text-[#344D7A]"
                                 >
                                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </button>
@@ -108,49 +115,50 @@ export default function LoginPage() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                            <label className="flex items-center text-gray-600 text-sm cursor-pointer">
-                                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#A30D2D] focus:ring-[#A30D2D] mr-2" />
+                            <label className="flex items-center text-[#5A6A7E] text-sm cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded border-[#E4E8ED] text-[#F5B800] focus:ring-[#F5B800] mr-2" />
                                 Ingat saya
                             </label>
-                            <Link href="/forgot-password" className="text-sm text-[#A30D2D] hover:underline">
+                            <Link href="/forgot-password" className="text-sm text-[#344D7A] hover:text-[#F5B800] font-medium">
                                 Lupa password?
                             </Link>
                         </div>
 
-                        <Button type="submit" className="w-full" size="lg" isLoading={loading}>
+                        <Button type="submit" className="w-full" size="lg" variant="accent" isLoading={loading}>
                             Masuk
+                            <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                     </form>
 
-                    <p className="mt-8 text-center text-gray-600 text-sm">
+                    <p className="mt-8 text-center text-[#5A6A7E]">
                         Belum punya akun?{" "}
-                        <Link href="/register" className="text-[#A30D2D] hover:underline font-medium">
+                        <Link href="/register" className="text-[#344D7A] hover:text-[#F5B800] font-semibold">
                             Daftar sekarang
                         </Link>
                     </p>
 
                     {/* Demo Credentials */}
-                    <div className="mt-8 p-4 rounded-lg bg-gray-100 border border-gray-200">
-                        <p className="text-gray-500 text-xs text-center mb-3">Demo Credentials</p>
+                    <div className="mt-8 p-5 rounded-2xl bg-white border border-[#E4E8ED]">
+                        <p className="text-[#5A6A7E] text-xs text-center mb-4 font-medium uppercase tracking-wide">Demo Credentials</p>
                         <div className="grid grid-cols-3 gap-2">
                             <button
                                 type="button"
                                 onClick={() => setFormData({ email: "admin@kumpulmain.id", password: "admin123" })}
-                                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:border-[#A30D2D] text-xs font-medium transition-colors"
+                                className="p-3 rounded-xl bg-[#344D7A]/5 border border-transparent hover:border-[#F5B800] text-[#344D7A] text-sm font-semibold transition-all"
                             >
                                 Admin
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setFormData({ email: "lapangan@kumpulmain.id", password: "pengelola123" })}
-                                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:border-[#A30D2D] text-xs font-medium transition-colors"
+                                className="p-3 rounded-xl bg-[#344D7A]/5 border border-transparent hover:border-[#F5B800] text-[#344D7A] text-sm font-semibold transition-all"
                             >
                                 Pengelola
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setFormData({ email: "andi@gmail.com", password: "user123" })}
-                                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:border-[#A30D2D] text-xs font-medium transition-colors"
+                                className="p-3 rounded-xl bg-[#F5B800]/10 border border-[#F5B800] text-[#344D7A] text-sm font-semibold"
                             >
                                 User
                             </button>
@@ -159,14 +167,48 @@ export default function LoginPage() {
                 </motion.div>
             </div>
 
-            {/* Right - Image */}
-            <div className="hidden lg:block lg:w-1/2 bg-[#A30D2D] relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800')] bg-cover bg-center opacity-20" />
-                <div className="relative h-full flex flex-col items-center justify-center p-12 text-white text-center">
-                    <h2 className="text-3xl font-bold mb-4">Booking Lapangan Jadi Mudah</h2>
-                    <p className="text-lg opacity-80">
-                        Cari venue, pilih waktu, dan booking langsung. Semua dalam satu platform.
+            {/* Right - Visual */}
+            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#344D7A] to-[#283C5F] relative overflow-hidden items-center justify-center p-12">
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-[#F5B800]/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F5B800]/5 rounded-full blur-3xl" />
+
+                <div className="relative text-center max-w-md">
+                    {/* Logo */}
+                    <div className="w-24 h-24 mx-auto mb-8 relative">
+                        <Image
+                            src="/logo.png"
+                            alt="KumpulMain"
+                            fill
+                            className="object-contain drop-shadow-2xl"
+                        />
+                    </div>
+
+                    <h2 className="text-3xl font-bold text-white mb-4">
+                        Booking Venue <span className="text-[#F5B800]">Lebih Mudah</span>
+                    </h2>
+                    <p className="text-white/70 text-lg mb-10">
+                        Cari venue, pilih waktu, dan booking langsung. Semua dalam satu platform!
                     </p>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                            <Trophy className="h-6 w-6 text-[#F5B800] mx-auto mb-2" />
+                            <p className="text-2xl font-bold text-white">500+</p>
+                            <p className="text-white/60 text-xs">Venue</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                            <Users className="h-6 w-6 text-[#F5B800] mx-auto mb-2" />
+                            <p className="text-2xl font-bold text-white">10K+</p>
+                            <p className="text-white/60 text-xs">Users</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                            <Star className="h-6 w-6 text-[#F5B800] mx-auto mb-2" />
+                            <p className="text-2xl font-bold text-white">4.9</p>
+                            <p className="text-white/60 text-xs">Rating</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
