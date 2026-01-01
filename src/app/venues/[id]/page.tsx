@@ -233,7 +233,7 @@ export default function VenueDetailPage() {
 
                                 {/* Description */}
                                 <Card className="p-6">
-                                    <h2 className="text-lg font-bold text-[#1A2744] mb-4">Tentang Venue</h2>
+                                    <h2 className="text-lg font-bold text-[#1A2744] mb-4">Deskripsi</h2>
                                     <p className="text-[#5A6A7E] leading-relaxed">
                                         {venue.name} adalah venue olahraga berkualitas yang terletak di {venue.city}.
                                         Dengan kapasitas hingga {venue.capacity} orang, venue ini cocok untuk berbagai
@@ -267,8 +267,8 @@ export default function VenueDetailPage() {
                                                         key={d.value}
                                                         onClick={() => setSelectedDate(d.value)}
                                                         className={`flex-shrink-0 w-16 py-3 rounded-xl text-center transition-all ${selectedDate === d.value
-                                                                ? "bg-[#344D7A] text-white"
-                                                                : "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
+                                                            ? "bg-[#344D7A] text-white"
+                                                            : "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
                                                             }`}
                                                     >
                                                         <p className="text-xs font-medium">{d.day}</p>
@@ -290,10 +290,10 @@ export default function VenueDetailPage() {
                                                         onClick={() => slot.available && setSelectedSlot(slot.time)}
                                                         disabled={!slot.available}
                                                         className={`p-3 rounded-xl text-sm font-medium transition-all ${selectedSlot === slot.time
-                                                                ? "bg-[#F5B800] text-[#344D7A]"
-                                                                : slot.available
-                                                                    ? "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
-                                                                    : "bg-[#F7F8FA] text-[#D1D9E0] cursor-not-allowed line-through"
+                                                            ? "bg-[#F5B800] text-[#344D7A]"
+                                                            : slot.available
+                                                                ? "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
+                                                                : "bg-[#F7F8FA] text-[#D1D9E0] cursor-not-allowed line-through"
                                                             }`}
                                                     >
                                                         {slot.time}
