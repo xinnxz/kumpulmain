@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, MapPin, Filter, X, Loader2, SlidersHorizontal, Grid3X3, LayoutList } from "lucide-react";
+import { Search, MapPin, X, Loader2, SlidersHorizontal } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { VenueCard } from "@/components/features/venue-card";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { venuesApi } from "@/lib/api";
 import type { Venue } from "@/types";
+
+const ITEMS_PER_PAGE = 20;
 
 export default function VenuesPage() {
     const [venues, setVenues] = useState<Venue[]>([]);
@@ -19,28 +22,42 @@ export default function VenuesPage() {
     const [cities, setCities] = useState<string[]>([]);
     const [types, setTypes] = useState<string[]>([]);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+
     useEffect(() => {
-        fetchVenues();
         fetchFilters();
     }, []);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetchVenues();
+            setCurrentPage(1); // Reset to page 1 on filter change
+            fetchVenues(1);
         }, 300);
         return () => clearTimeout(timer);
     }, [search, selectedCity, selectedType]);
 
-    const fetchVenues = async () => {
+    useEffect(() => {
+        fetchVenues(currentPage);
+    }, [currentPage]);
+
+    const fetchVenues = async (page: number) => {
         try {
             setLoading(true);
-            const params: Record<string, string> = {};
+            const params: Record<string, string | number> = {
+                page: page,
+                take: ITEMS_PER_PAGE,
+            };
             if (search) params.search = search;
             if (selectedCity) params.city = selectedCity;
             if (selectedType) params.venueType = selectedType;
 
             const res = await venuesApi.getAll(params);
             setVenues(res.data.data);
+            setTotalItems(res.data.meta?.total || res.data.data.length);
+            setTotalPages(res.data.meta?.totalPages || Math.ceil((res.data.meta?.total || res.data.data.length) / ITEMS_PER_PAGE));
         } catch (error) {
             console.error("Error fetching venues:", error);
         } finally {
@@ -65,6 +82,13 @@ export default function VenuesPage() {
         setSearch("");
         setSelectedCity("");
         setSelectedType("");
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        // Scroll to top of results
+        window.scrollTo({ top: 300, behavior: 'smooth' });
     };
 
     const hasActiveFilters = search || selectedCity || selectedType;
@@ -123,7 +147,7 @@ export default function VenuesPage() {
                                     onChange={(e) => setSelectedCity(e.target.value)}
                                     className="w-full h-12 pl-12 pr-4 rounded-xl bg-[#F7F8FA] border border-transparent text-[#1A2744] focus:border-[#F5B800] focus:bg-white outline-none appearance-none cursor-pointer transition-all"
                                 >
-                                    <option value="">Semua Kita</option>
+                                    <option value="">Semua Kota</option>
                                     {cities.map((city) => (
                                         <option key={city} value={city}>{city}</option>
                                     ))}
@@ -140,7 +164,9 @@ export default function VenuesPage() {
                                 >
                                     <option value="">Semua Jenis</option>
                                     {types.map((type) => (
-                                        <option key={type} value={type}>{type}</option>
+                                        <option key={type} value={type}>
+                                            {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -159,24 +185,24 @@ export default function VenuesPage() {
                                 {search && (
                                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#344D7A]/10 text-[#344D7A] text-sm">
                                         "{search}"
-                                        <button onClick={() => setSearch("")} className="ml-2"><X className="h-3 w-3" /></button>
+                                        <button onClick={() => setSearch("")} className="ml-2 cursor-pointer hover:text-[#F5B800]"><X className="h-3 w-3" /></button>
                                     </span>
                                 )}
                                 {selectedCity && (
                                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm">
                                         {selectedCity}
-                                        <button onClick={() => setSelectedCity("")} className="ml-2"><X className="h-3 w-3" /></button>
+                                        <button onClick={() => setSelectedCity("")} className="ml-2 cursor-pointer hover:text-[#F5B800]"><X className="h-3 w-3" /></button>
                                     </span>
                                 )}
                                 {selectedType && (
                                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#344D7A]/10 text-[#344D7A] text-sm">
                                         {selectedType}
-                                        <button onClick={() => setSelectedType("")} className="ml-2"><X className="h-3 w-3" /></button>
+                                        <button onClick={() => setSelectedType("")} className="ml-2 cursor-pointer hover:text-[#F5B800]"><X className="h-3 w-3" /></button>
                                     </span>
                                 )}
                                 <button
                                     onClick={clearFilters}
-                                    className="text-[#344D7A] text-sm font-medium hover:underline ml-2"
+                                    className="text-[#344D7A] text-sm font-medium hover:underline ml-2 cursor-pointer"
                                 >
                                     Reset semua
                                 </button>
@@ -189,13 +215,6 @@ export default function VenuesPage() {
             {/* Results */}
             <section className="pb-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Results Count */}
-                    <div className="flex items-center justify-between mb-6">
-                        <p className="text-[#5A6A7E]">
-                            {loading ? "Memuat..." : `Menampilkan ${venues.length} venue`}
-                        </p>
-                    </div>
-
                     {/* Grid */}
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
@@ -205,18 +224,29 @@ export default function VenuesPage() {
                             </div>
                         </div>
                     ) : venues.length > 0 ? (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {venues.map((venue, index) => (
-                                <motion.div
-                                    key={venue.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.05 }}
-                                >
-                                    <VenueCard venue={venue} />
-                                </motion.div>
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {venues.map((venue, index) => (
+                                    <motion.div
+                                        key={venue.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                    >
+                                        <VenueCard venue={venue} />
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Pagination */}
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                totalItems={totalItems}
+                                itemsPerPage={ITEMS_PER_PAGE}
+                                onPageChange={handlePageChange}
+                            />
+                        </>
                     ) : (
                         <div className="text-center py-20 bg-white rounded-2xl border border-[#E4E8ED]">
                             <div className="w-20 h-20 rounded-full bg-[#F7F8FA] flex items-center justify-center mx-auto mb-6">

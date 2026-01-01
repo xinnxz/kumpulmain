@@ -14,16 +14,33 @@ const sportBadgeStyles: Record<string, string> = {
     badminton: "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
     basketball: "bg-gradient-to-r from-orange-500 to-orange-600 text-white",
     tennis: "bg-gradient-to-r from-pink-500 to-pink-600 text-white",
+    "mini soccer": "bg-gradient-to-r from-teal-500 to-teal-600 text-white",
+    minisoccer: "bg-gradient-to-r from-teal-500 to-teal-600 text-white",
     default: "bg-gradient-to-r from-[#344D7A] to-[#4A6699] text-white",
 };
+
+// Venue type images mapping
+const venueTypeImages: Record<string, string> = {
+    futsal: "/images/venue-futsal.png",
+    badminton: "/images/venue-badminton.png",
+    basketball: "/images/venue-basketball.png",
+    tennis: "/images/venue-tennis.png",
+    "mini soccer": "/images/venue-minisoccer.png",
+    minisoccer: "/images/venue-minisoccer.png",
+};
+
+// Helper to capitalize sport type name
+function capitalizeType(type: string): string {
+    return type.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
 
 interface VenueCardProps {
     venue: Venue;
 }
 
 export function VenueCard({ venue }: VenueCardProps) {
-    const imageUrl = venue.images?.[0] || "https://placehold.co/400x300/f7f8fa/5a6a7e?text=Venue";
     const sportType = venue.venueType?.toLowerCase() || "default";
+    const imageUrl = venue.images?.[0] || venueTypeImages[sportType] || "/images/venue-futsal.png";
     const badgeStyle = sportBadgeStyles[sportType] || sportBadgeStyles.default;
 
     return (
@@ -43,7 +60,7 @@ export function VenueCard({ venue }: VenueCardProps) {
                     {venue.venueType && (
                         <div className="absolute top-4 left-4">
                             <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase shadow-lg ${badgeStyle}`}>
-                                {venue.venueType}
+                                {capitalizeType(venue.venueType)}
                             </span>
                         </div>
                     )}

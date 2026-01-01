@@ -139,3 +139,34 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(52, 77, 122, 0.12);
 }
+
+/* Best Practice Cursor Styles */
+button,
+a,
+[role="button"],
+select,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+label[for],
+.clickable {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea {
+  cursor: text;
+}
+
+input:disabled,
+button:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}

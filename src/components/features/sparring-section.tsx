@@ -22,13 +22,12 @@ export function SparringSection() {
                             🤝 Main Bareng
                         </span>
                         <h2 className="text-3xl font-bold text-[#1A2744] mb-4">
-                            Cari lawan sparring hanya
+                            Cari lawan sparring
                             <br />
-                            <span className="text-[#F5B800]">dalam ketukan jari.</span>
+                            <span className="text-[#F5B800]">simpel.</span>
                         </h2>
                         <p className="text-[#5A6A7E] mb-8 leading-relaxed">
-                            Buat undangan main bareng, temukan teman olahraga, dan patungan biaya
-                            lapangan. Dengan fitur Main Bareng, olahraga jadi lebih seru dan hemat!
+                            Buat undangan main bareng, cari teman olahraga baru, bisa patungan juga. Dengan fitur Main Bareng, olahraga jadi lebih hemat!
                         </p>
 
                         {/* Features */}
