@@ -46,9 +46,11 @@ export default function VenuesPage() {
     const fetchVenues = async (page: number) => {
         try {
             setLoading(true);
-            const params: Record<string, string | number> = {
-                page: page,
-                take: ITEMS_PER_PAGE,
+            // Backend uses skip/take, so convert page to skip
+            const skip = (page - 1) * ITEMS_PER_PAGE;
+            const params: Record<string, string> = {
+                skip: String(skip),
+                take: String(ITEMS_PER_PAGE),
             };
             if (search) params.search = search;
             if (selectedCity) params.city = selectedCity;
@@ -56,8 +58,9 @@ export default function VenuesPage() {
 
             const res = await venuesApi.getAll(params);
             setVenues(res.data.data);
-            setTotalItems(res.data.meta?.total || res.data.data.length);
-            setTotalPages(res.data.meta?.totalPages || Math.ceil((res.data.meta?.total || res.data.data.length) / ITEMS_PER_PAGE));
+            const total = res.data.meta?.total || res.data.data.length;
+            setTotalItems(total);
+            setTotalPages(Math.ceil(total / ITEMS_PER_PAGE));
         } catch (error) {
             console.error("Error fetching venues:", error);
         } finally {

@@ -19,15 +19,52 @@ const sportBadgeStyles: Record<string, string> = {
     default: "bg-gradient-to-r from-[#344D7A] to-[#4A6699] text-white",
 };
 
-// Venue type images mapping
-const venueTypeImages: Record<string, string> = {
-    futsal: "/images/venue-futsal.png",
-    badminton: "/images/venue-badminton.png",
-    basketball: "/images/venue-basketball.png",
-    tennis: "/images/venue-tennis.png",
-    "mini soccer": "/images/venue-minisoccer.png",
-    minisoccer: "/images/venue-minisoccer.png",
+// Venue type images mapping - multiple images per type for variety
+const venueTypeImages: Record<string, string[]> = {
+    futsal: [
+        "/images/venue_futsal_1_1767281872661.png",
+        "/images/venue_futsal_2_1767281890436.png",
+        "/images/venue_futsal_3_1767281910174.png",
+        "/images/venue_futsal_4_1767283032412.png",
+    ],
+    badminton: [
+        "/images/venue_badminton_1_1767281940993.png",
+        "/images/venue_badminton_2_1767281962380.png",
+    ],
+    basketball: [
+        "/images/venue_basketball_1_1767281980991.png",
+        "/images/venue_basketball_2_1767281999441.png",
+    ],
+    basket: [
+        "/images/venue_basketball_1_1767281980991.png",
+        "/images/venue_basketball_2_1767281999441.png",
+    ],
+    tennis: [
+        "/images/venue_tennis_1_1767282072115.png",
+        "/images/venue_tennis_2_1767282091223.png",
+    ],
+    soccer: [
+        "/images/venue_soccer_1_1767282020121.png",
+        "/images/venue_soccer_2_1767282052740.png",
+    ],
+    "mini soccer": [
+        "/images/venue_soccer_1_1767282020121.png",
+        "/images/venue_soccer_2_1767282052740.png",
+    ],
+    minisoccer: [
+        "/images/venue_soccer_1_1767282020121.png",
+        "/images/venue_soccer_2_1767282052740.png",
+    ],
 };
+
+// Get image based on venue type and ID (for variety)
+function getVenueImage(venueId: string, venueType: string): string {
+    const type = venueType?.toLowerCase() || "futsal";
+    const images = venueTypeImages[type] || venueTypeImages.futsal;
+    // Use venue ID hash to pick a consistent image
+    const hash = venueId.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+    return images[hash % images.length];
+}
 
 // Helper to capitalize sport type name
 function capitalizeType(type: string): string {
@@ -40,7 +77,7 @@ interface VenueCardProps {
 
 export function VenueCard({ venue }: VenueCardProps) {
     const sportType = venue.venueType?.toLowerCase() || "default";
-    const imageUrl = venue.images?.[0] || venueTypeImages[sportType] || "/images/venue-futsal.png";
+    const imageUrl = venue.images?.[0] || getVenueImage(venue.id, venue.venueType || "futsal");
     const badgeStyle = sportBadgeStyles[sportType] || sportBadgeStyles.default;
 
     return (
