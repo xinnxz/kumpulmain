@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Bell, LogOut, Settings, Calendar, MapPin, Users, Trophy, Building2, HelpCircle } from "lucide-react";
+import { Menu, X, User, ChevronDown, Bell, LogOut, Settings, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -16,13 +16,13 @@ export function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const { user, isAuthenticated, logout } = useAuthStore();
 
-    // Core navigation links
+    // Core navigation links - clean text only
     const navLinks = [
-        { href: "/venues", label: "Cari Venue", icon: MapPin },
-        { href: "/joinan", label: "Main Bareng", icon: Users },
-        { href: "/competitions", label: "Kompetisi", icon: Trophy },
-        { href: "/partner", label: "Partner Venue", icon: Building2 },
-        { href: "/about", label: "Tentang", icon: HelpCircle },
+        { href: "/venues", label: "Cari Venue" },
+        { href: "/joinan", label: "Main Bareng" },
+        { href: "/competitions", label: "Kompetisi" },
+        { href: "/partner", label: "Partner" },
+        { href: "/about", label: "Tentang" },
     ];
 
     // Handle scroll effect
@@ -72,33 +72,32 @@ export function Navbar() {
                         </span>
                     </Link>
 
-                    {/* Desktop Nav */}
-                    <div className="hidden lg:flex items-center space-x-1">
+                    {/* Desktop Nav - Clean text with animated underline */}
+                    <div className="hidden lg:flex items-center space-x-8">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`relative px-4 py-2 rounded-xl transition-all duration-200 font-medium text-sm group ${isActive(link.href)
-                                        ? "text-[#344D7A] bg-[#F5B800]/10"
-                                        : "text-[#5A6A7E] hover:text-[#344D7A] hover:bg-[#F7F8FA]"
-                                    }`}
+                                className="relative py-2 group"
                             >
-                                <span className="flex items-center space-x-2">
-                                    <link.icon className={`h-4 w-4 transition-colors ${isActive(link.href) ? "text-[#F5B800]" : "text-[#8A95A5] group-hover:text-[#F5B800]"
-                                        }`} />
-                                    <span>{link.label}</span>
+                                <span className={`text-sm font-medium transition-colors duration-200 ${isActive(link.href)
+                                        ? "text-[#344D7A]"
+                                        : "text-[#5A6A7E] group-hover:text-[#344D7A]"
+                                    }`}>
+                                    {link.label}
                                 </span>
 
-                                {/* Active indicator - elegant underline */}
+                                {/* Animated underline for active state */}
                                 {isActive(link.href) && (
                                     <motion.div
-                                        layoutId="navbar-indicator"
-                                        className="absolute -bottom-[13px] left-4 right-4 h-0.5 bg-gradient-to-r from-[#F5B800] to-[#FFD740] rounded-full"
+                                        layoutId="nav-underline"
+                                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#F5B800] to-[#FFD740] rounded-full"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                                     />
                                 )}
 
-                                {/* Hover indicator */}
-                                <span className={`absolute -bottom-[13px] left-4 right-4 h-0.5 bg-[#F5B800]/0 rounded-full transition-all duration-300 ${!isActive(link.href) ? "group-hover:bg-[#F5B800]/30" : ""
+                                {/* Hover underline - elegant fade in */}
+                                <span className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[#F5B800]/40 transform origin-left transition-transform duration-300 ease-out ${isActive(link.href) ? "scale-x-0" : "scale-x-0 group-hover:scale-x-100"
                                     }`} />
                             </Link>
                         ))}
@@ -155,25 +154,25 @@ export function Navbar() {
                                                     <Link
                                                         href={getDashboardLink()}
                                                         onClick={() => setUserMenuOpen(false)}
-                                                        className="flex items-center space-x-3 px-4 py-2.5 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors group"
+                                                        className="flex items-center space-x-3 px-4 py-2.5 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors"
                                                     >
-                                                        <Calendar className="h-4 w-4 group-hover:text-[#F5B800] transition-colors" />
+                                                        <Calendar className="h-4 w-4" />
                                                         <span className="text-sm">Dashboard</span>
                                                     </Link>
                                                     <Link
                                                         href="/bookings"
                                                         onClick={() => setUserMenuOpen(false)}
-                                                        className="flex items-center space-x-3 px-4 py-2.5 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors group"
+                                                        className="flex items-center space-x-3 px-4 py-2.5 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors"
                                                     >
-                                                        <MapPin className="h-4 w-4 group-hover:text-[#F5B800] transition-colors" />
+                                                        <MapPin className="h-4 w-4" />
                                                         <span className="text-sm">Booking Saya</span>
                                                     </Link>
                                                     <Link
                                                         href="/settings"
                                                         onClick={() => setUserMenuOpen(false)}
-                                                        className="flex items-center space-x-3 px-4 py-2.5 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors group"
+                                                        className="flex items-center space-x-3 px-4 py-2.5 text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A] transition-colors"
                                                     >
-                                                        <Settings className="h-4 w-4 group-hover:text-[#F5B800] transition-colors" />
+                                                        <Settings className="h-4 w-4" />
                                                         <span className="text-sm">Pengaturan</span>
                                                     </Link>
                                                 </div>
@@ -182,7 +181,7 @@ export function Navbar() {
                                                 <div className="border-t border-[#E4E8ED] pt-2">
                                                     <button
                                                         onClick={handleLogout}
-                                                        className="flex items-center space-x-3 px-4 py-2.5 text-red-500 hover:bg-red-50 w-full transition-colors group"
+                                                        className="flex items-center space-x-3 px-4 py-2.5 text-red-500 hover:bg-red-50 w-full transition-colors"
                                                     >
                                                         <LogOut className="h-4 w-4" />
                                                         <span className="text-sm font-medium">Keluar</span>
@@ -202,7 +201,7 @@ export function Navbar() {
                                 </Link>
                                 <Link href="/register">
                                     <Button variant="accent" className="shadow-lg shadow-[#F5B800]/20 hover:shadow-xl hover:shadow-[#F5B800]/30 transition-shadow">
-                                        Daftar Gratis
+                                        Daftar
                                     </Button>
                                 </Link>
                             </>
@@ -241,14 +240,13 @@ export function Navbar() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className={`flex items-center space-x-3 py-3 px-4 rounded-xl font-medium transition-all ${isActive(link.href)
-                                            ? "bg-[#F5B800]/10 text-[#344D7A]"
+                                    className={`block py-3 px-4 rounded-xl font-medium transition-all ${isActive(link.href)
+                                            ? "bg-[#F5B800]/10 text-[#344D7A] border-l-2 border-[#F5B800]"
                                             : "text-[#5A6A7E] hover:bg-[#F7F8FA] hover:text-[#344D7A]"
                                         }`}
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    <link.icon className={`h-5 w-5 ${isActive(link.href) ? "text-[#F5B800]" : "text-[#8A95A5]"}`} />
-                                    <span>{link.label}</span>
+                                    {link.label}
                                 </Link>
                             ))}
 
@@ -257,7 +255,6 @@ export function Navbar() {
                                     <>
                                         <Link href={getDashboardLink()} onClick={() => setMobileMenuOpen(false)}>
                                             <Button className="w-full justify-start" variant="secondary">
-                                                <Calendar className="h-4 w-4 mr-2" />
                                                 Dashboard
                                             </Button>
                                         </Link>
@@ -266,7 +263,6 @@ export function Navbar() {
                                             variant="ghost"
                                             onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
                                         >
-                                            <LogOut className="h-4 w-4 mr-2" />
                                             Keluar
                                         </Button>
                                     </>
@@ -276,7 +272,7 @@ export function Navbar() {
                                             <Button className="w-full" variant="outline">Masuk</Button>
                                         </Link>
                                         <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                                            <Button className="w-full" variant="accent">Daftar Gratis</Button>
+                                            <Button className="w-full" variant="accent">Daftar</Button>
                                         </Link>
                                     </>
                                 )}
