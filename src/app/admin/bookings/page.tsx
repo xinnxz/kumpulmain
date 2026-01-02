@@ -2,12 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-    Calendar, Search, Eye, CheckCircle, XCircle, Clock,
-    Shield, Bell, LogOut, User, MapPin, CreditCard
-} from "lucide-react";
+import { Calendar, Search, Eye, CheckCircle, XCircle, Clock, User, MapPin, CreditCard } from "lucide-react";
+import { AdminHeader } from "@/components/layout/admin-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
@@ -21,14 +18,13 @@ const bookings = [
 ];
 
 const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: any }> = {
-    PENDING: { label: "Menunggu", color: "text-yellow-600", bgColor: "bg-yellow-100", icon: Clock },
-    CONFIRMED: { label: "Terkonfirmasi", color: "text-green-600", bgColor: "bg-green-100", icon: CheckCircle },
-    COMPLETED: { label: "Selesai", color: "text-blue-600", bgColor: "bg-blue-100", icon: CheckCircle },
-    CANCELLED: { label: "Dibatalkan", color: "text-red-600", bgColor: "bg-red-100", icon: XCircle },
+    PENDING: { label: "Menunggu", color: "text-amber-700", bgColor: "bg-amber-100", icon: Clock },
+    CONFIRMED: { label: "Terkonfirmasi", color: "text-emerald-700", bgColor: "bg-emerald-100", icon: CheckCircle },
+    COMPLETED: { label: "Selesai", color: "text-blue-700", bgColor: "bg-blue-100", icon: CheckCircle },
+    CANCELLED: { label: "Dibatalkan", color: "text-red-700", bgColor: "bg-red-100", icon: XCircle },
 };
 
 export default function AdminBookingsPage() {
-    const router = useRouter();
     const [filter, setFilter] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -39,43 +35,35 @@ export default function AdminBookingsPage() {
     });
 
     return (
-        <main className="min-h-screen bg-[#0D1520]">
-            <header className="bg-[#1A2744] border-b border-white/10 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3">
-                            <Shield className="w-8 h-8 text-[#F5B800]" />
-                            <span className="text-xl font-bold text-white">Admin Panel</span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <button className="relative p-2 text-white/70 hover:text-white"><Bell className="w-6 h-6" /></button>
-                            <button onClick={() => router.push("/admin/login")} className="p-2 text-white/70 hover:text-red-400"><LogOut className="w-5 h-5" /></button>
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+            <AdminHeader />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
                     <div>
-                        <Link href="/admin/dashboard" className="text-white/50 hover:text-white text-sm mb-2 inline-block">← Kembali ke Dashboard</Link>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <Calendar className="w-8 h-8 text-[#F5B800]" />
+                        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                                <Calendar className="w-5 h-5 text-white" />
+                            </div>
                             Kelola Booking
                         </h1>
-                        <p className="text-white/50 mt-1">Lihat semua booking di platform</p>
+                        <p className="text-slate-500 mt-1">Lihat semua booking di platform</p>
                     </div>
-                    <div className="flex gap-3 mt-4 md:mt-0">
+                    <div className="mt-4 md:mt-0">
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
-                            <input type="text" placeholder="Cari booking..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-[#F5B800] outline-none w-64" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <input type="text" placeholder="Cari booking..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-12 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none w-64" />
                         </div>
                     </div>
                 </motion.div>
 
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="flex gap-2 mb-6">
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="flex gap-2 mb-6 overflow-x-auto pb-2">
                     {["all", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].map((status) => (
-                        <button key={status} onClick={() => setFilter(status)} className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === status ? "bg-[#F5B800] text-[#1A2744]" : "bg-white/5 text-white/70 hover:bg-white/10"}`}>
+                        <button key={status} onClick={() => setFilter(status)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${filter === status
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+                                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"}`}>
                             {status === "all" ? "Semua" : statusConfig[status]?.label || status}
                         </button>
                     ))}
@@ -86,14 +74,14 @@ export default function AdminBookingsPage() {
                         const status = statusConfig[booking.status];
                         const StatusIcon = status.icon;
                         return (
-                            <Card key={booking.id} className="p-4 bg-white/5 border-white/10">
+                            <Card key={booking.id} className="p-4 bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <p className="font-semibold text-white">{booking.venue}</p>
-                                            {booking.isJoinan && <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full font-medium">Joinan</span>}
+                                            <p className="font-semibold text-slate-900">{booking.venue}</p>
+                                            {booking.isJoinan && <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">Joinan</span>}
                                         </div>
-                                        <div className="flex flex-wrap gap-4 text-sm text-white/50">
+                                        <div className="flex flex-wrap gap-4 text-sm text-slate-500">
                                             <span className="flex items-center gap-1"><User className="w-4 h-4" /> {booking.customer}</span>
                                             <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {booking.owner}</span>
                                             <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {booking.date}</span>
@@ -102,12 +90,12 @@ export default function AdminBookingsPage() {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <div className="text-right">
-                                            <p className="font-bold text-white">{formatCurrency(booking.amount)}</p>
+                                            <p className="font-bold text-slate-900">{formatCurrency(booking.amount)}</p>
                                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${status.bgColor} ${status.color}`}>
                                                 <StatusIcon className="w-3 h-3" /> {status.label}
                                             </span>
                                         </div>
-                                        <Button variant="ghost" size="sm" className="text-white/70 hover:text-white"><Eye className="w-4 h-4" /></Button>
+                                        <Button variant="ghost" size="sm" className="text-slate-600 hover:text-indigo-600 hover:bg-indigo-50"><Eye className="w-4 h-4" /></Button>
                                     </div>
                                 </div>
                             </Card>

@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 const settingsCategories = [
     { id: "general", label: "Umum", icon: Settings },
     { id: "commission", label: "Komisi", icon: Percent },
-    { id: "features", label: "Fitur", icon: Toggle },
+    { id: "features", label: "Fitur", icon: ToggleLeft },
     { id: "notifications", label: "Notifikasi", icon: Mail },
 ];
 
