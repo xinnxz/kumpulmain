@@ -144,7 +144,7 @@ export default function CompetitionsPage() {
                         </h1>
                         <p className="text-lg text-white/70 mb-8">
                             Ikuti berbagai pilihan kompetisi dari seluruh Indonesia.
-                            Rasakan keseruan bertanding bersama ribuan tim amatir lainnya!
+                            Buktikan kalau kamu bisa menjadi yang terbaik!
                         </p>
 
                         {/* Search Bar */}

@@ -96,7 +96,7 @@ export default function JoinanPage() {
                             Cari Teman Main
                         </h1>
                         <p className="text-[#5A6A7E] max-w-lg mx-auto">
-                            Join undangan olahraga dan patungan biaya bersama. Lebih hemat, lebih seru!
+                            Join undangan olahraga, bisa patungan biar lebih hemat!
                         </p>
                     </motion.div>
 

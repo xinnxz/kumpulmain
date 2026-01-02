@@ -115,7 +115,7 @@ export default function VenuesPage() {
                             Cari Venue Olahraga
                         </h1>
                         <p className="text-[#5A6A7E] max-w-lg mx-auto">
-                            Pilih venue terbaik di kotamu. Booking mudah, main langsung!
+                            Pilih venue terbaik di kotamu. Booking mudah murah, Yu buruan main bareng!
                         </p>
                     </motion.div>
 

@@ -88,8 +88,8 @@ export default function PartnerPage() {
                                 <span className="text-[#F5B800]"> Venue</span> Kamu
                             </h1>
                             <p className="text-xl text-white/70 mb-8">
-                                Bergabunglah dengan ratusan pengelola venue yang sudah merasakan kemudahan
-                                dan peningkatan pendapatan bersama KumpulMain.
+                                Ayok Join bersama kami untuk membuat bisnis kalian menjadi semakin terkenal dan terpercaya.
+                                Dengan KumpulMain, kamu akan merasakan keuntungan bersama KumpulMain.
                             </p>
                             <div className="flex flex-wrap gap-4">
                                 <Link href="/partner/register">
