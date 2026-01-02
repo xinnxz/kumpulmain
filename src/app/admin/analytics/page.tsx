@@ -1,175 +1,106 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-    BarChart3, TrendingUp, TrendingDown, Users, Building2, Calendar, CreditCard,
-    Shield, Bell, LogOut, ArrowUpRight, Download
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
-
-const monthlyData = [
-    { month: "Jul", users: 1200, bookings: 450, revenue: 45000000 },
-    { month: "Agu", users: 1500, bookings: 520, revenue: 52000000 },
-    { month: "Sep", users: 1800, bookings: 480, revenue: 48000000 },
-    { month: "Okt", users: 2200, bookings: 610, revenue: 61000000 },
-    { month: "Nov", users: 2800, bookings: 550, revenue: 55000000 },
-    { month: "Des", users: 3500, bookings: 720, revenue: 72000000 },
-];
-
-const summaryStats = [
-    { label: "Total Users", value: "12,450", change: "+18%", trend: "up", icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Total Venues", value: "324", change: "+12%", trend: "up", icon: Building2, color: "from-purple-500 to-purple-600" },
-    { label: "Total Bookings", value: "45,678", change: "+25%", trend: "up", icon: Calendar, color: "from-green-500 to-green-600" },
-    { label: "Total Revenue", value: "Rp 2.8 M", change: "+32%", trend: "up", icon: CreditCard, color: "from-[#F5B800] to-[#FFD740]" },
-];
+import { BarChart3, TrendingUp, Users, Building2, Calendar, CreditCard, ArrowUp, Flame } from "lucide-react";
+import { AdminLayout, useAdminTheme, adminThemeStyles } from "@/components/layout/admin-header";
 
 const topVenues = [
-    { name: "Futsal Arena Jakarta", bookings: 1250, revenue: 187500000, growth: "+15%" },
-    { name: "Badminton Center Bandung", bookings: 980, revenue: 98000000, growth: "+12%" },
-    { name: "Basketball Court Surabaya", bookings: 856, revenue: 149800000, growth: "+8%" },
-    { name: "Tennis Club Depok", bookings: 654, revenue: 130800000, growth: "+5%" },
-    { name: "Mini Soccer Bekasi", bookings: 542, revenue: 135500000, growth: "+22%" },
+    { name: "Futsal Arena Jakarta", bookings: 234, revenue: 35100000 },
+    { name: "Badminton Center Bandung", bookings: 189, revenue: 18900000 },
+    { name: "Basketball Court Surabaya", bookings: 156, revenue: 21840000 },
+    { name: "Tennis Club Depok", bookings: 134, revenue: 26800000 },
+    { name: "Mini Soccer Bekasi", bookings: 98, revenue: 24500000 },
 ];
 
-export default function AdminAnalyticsPage() {
-    const router = useRouter();
-    const [period, setPeriod] = useState("6m");
+const growthData = [
+    { month: "Jan", value: 35 }, { month: "Feb", value: 45 }, { month: "Mar", value: 52 },
+    { month: "Apr", value: 63 }, { month: "May", value: 73 }, { month: "Jun", value: 89 },
+];
 
-    const maxRevenue = Math.max(...monthlyData.map(d => d.revenue));
+function AnalyticsContent() {
+    const { isDark } = useAdminTheme();
+    const styles = adminThemeStyles[isDark ? "dark" : "light"];
+
+    const stats = [
+        { label: "Total Revenue", value: "Rp 156.8 Jt", change: "+23%", icon: CreditCard, color: "from-emerald-500 to-teal-400" },
+        { label: "Total Booking", value: "1,847", change: "+15%", icon: Calendar, color: "from-blue-500 to-cyan-400" },
+        { label: "User Aktif", value: "892", change: "+8%", icon: Users, color: "from-purple-500 to-pink-400" },
+        { label: "Venue Aktif", value: "67", change: "+3", icon: Building2, color: "from-amber-500 to-orange-400" },
+    ];
 
     return (
-        <main className="min-h-screen bg-[#0D1520]">
-            <header className="bg-[#1A2744] border-b border-white/10 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3"><Shield className="w-8 h-8 text-[#F5B800]" /><span className="text-xl font-bold text-white">Admin Panel</span></div>
-                        <div className="flex items-center gap-4">
-                            <button className="relative p-2 text-white/70 hover:text-white"><Bell className="w-6 h-6" /></button>
-                            <button onClick={() => router.push("/admin/login")} className="p-2 text-white/70 hover:text-red-400"><LogOut className="w-5 h-5" /></button>
-                        </div>
+        <div className="max-w-[1600px] mx-auto px-6 py-8">
+            <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8">
+                <h1 className={`text-3xl font-bold ${styles.textPrimary} flex items-center gap-3`}>
+                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
+                        <BarChart3 className="w-6 h-6 text-white" />
                     </div>
-                </div>
-            </header>
+                    Analitik Platform
+                </h1>
+                <p className={`${styles.textMuted} mt-2`}>Insight dan statistik performa</p>
+            </motion.div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-                    <div>
-                        <Link href="/admin/dashboard" className="text-white/50 hover:text-white text-sm mb-2 inline-block">← Kembali ke Dashboard</Link>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <BarChart3 className="w-8 h-8 text-[#F5B800]" />
-                            Analytics & Insights
-                        </h1>
-                        <p className="text-white/50 mt-1">Pantau performa platform secara keseluruhan</p>
-                    </div>
-                    <div className="flex gap-3 mt-4 md:mt-0">
-                        <select value={period} onChange={(e) => setPeriod(e.target.value)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#F5B800] outline-none">
-                            <option value="1m">1 Bulan</option>
-                            <option value="3m">3 Bulan</option>
-                            <option value="6m">6 Bulan</option>
-                            <option value="1y">1 Tahun</option>
-                        </select>
-                        <Button variant="outline" className="border-white/20 text-white hover:bg-white/10"><Download className="w-4 h-4 mr-2" /> Export</Button>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {stats.map((stat, i) => (
+                    <motion.div key={stat.label} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 * i }}
+                        className={`p-5 ${styles.cardBg} border rounded-2xl ${styles.cardHover} transition-colors group`}>
+                        <div className="flex items-start justify-between mb-4">
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
+                                <stat.icon className="w-6 h-6 text-white" />
+                            </div>
+                            <span className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles.success}`}>
+                                <ArrowUp className="w-3 h-3" />{stat.change}
+                            </span>
+                        </div>
+                        <p className={`text-2xl font-bold ${styles.textPrimary} mb-1`}>{stat.value}</p>
+                        <p className={`text-sm ${styles.textMuted}`}>{stat.label}</p>
+                    </motion.div>
+                ))}
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className={`p-6 ${styles.cardBg} border rounded-2xl`}>
+                    <h3 className={`text-lg font-bold ${styles.textPrimary} flex items-center gap-2 mb-6`}>
+                        <TrendingUp className="w-5 h-5 text-emerald-500" />
+                        Revenue Growth
+                    </h3>
+                    <div className="h-64 flex items-end gap-4">
+                        {growthData.map((data, i) => (
+                            <div key={data.month} className="flex-1 flex flex-col items-center gap-2">
+                                <motion.div initial={{ height: 0 }} animate={{ height: `${data.value}%` }} transition={{ duration: 0.8, delay: 0.4 + i * 0.1 }}
+                                    className="w-full bg-gradient-to-t from-indigo-500 to-purple-400 rounded-t-lg" />
+                                <span className={`text-xs ${styles.textMuted}`}>{data.month}</span>
+                            </div>
+                        ))}
                     </div>
                 </motion.div>
 
-                {/* Summary Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    {summaryStats.map((stat, i) => (
-                        <motion.div key={stat.label} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 * i }}>
-                            <Card className="p-5 bg-white/5 border-white/10">
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                                        <stat.icon className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="flex items-center gap-1 text-xs font-semibold text-green-400">
-                                        <TrendingUp className="w-3 h-3" /> {stat.change}
-                                    </span>
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className={`p-6 ${styles.cardBg} border rounded-2xl`}>
+                    <h3 className={`text-lg font-bold ${styles.textPrimary} flex items-center gap-2 mb-6`}>
+                        <Flame className="w-5 h-5 text-amber-400" />
+                        Top Venues
+                    </h3>
+                    <div className="space-y-4">
+                        {topVenues.map((venue, i) => (
+                            <motion.div key={venue.name} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.1 }}
+                                className={`flex items-center gap-4 p-3 rounded-xl ${isDark ? "bg-white/5" : "bg-slate-50"}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white ${i === 0 ? "bg-amber-500" : i === 1 ? "bg-slate-400" : i === 2 ? "bg-amber-700" : "bg-slate-300"}`}>
+                                    {i + 1}
                                 </div>
-                                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                                <p className="text-sm text-white/50">{stat.label}</p>
-                            </Card>
-                        </motion.div>
-                    ))}
-                </div>
-
-                <div className="grid lg:grid-cols-3 gap-6">
-                    {/* Revenue Chart */}
-                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="lg:col-span-2">
-                        <Card className="p-6 bg-white/5 border-white/10">
-                            <h2 className="text-lg font-bold text-white mb-6">Revenue Bulanan</h2>
-                            <div className="flex items-end gap-4 h-64">
-                                {monthlyData.map((data) => (
-                                    <div key={data.month} className="flex-1 flex flex-col items-center">
-                                        <p className="text-xs text-white/50 mb-2">{(data.revenue / 1000000).toFixed(0)}M</p>
-                                        <div className="w-full bg-gradient-to-t from-[#F5B800] to-[#FFD740] rounded-t-lg transition-all hover:opacity-80" style={{ height: `${(data.revenue / maxRevenue) * 180}px` }} />
-                                        <p className="text-sm text-white/50 mt-2">{data.month}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </Card>
-                    </motion.div>
-
-                    {/* Top Venues */}
-                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-                        <Card className="p-6 bg-white/5 border-white/10">
-                            <h2 className="text-lg font-bold text-white mb-4">Top Venues</h2>
-                            <div className="space-y-4">
-                                {topVenues.slice(0, 5).map((venue, i) => (
-                                    <div key={venue.name} className="flex items-center gap-3">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${i === 0 ? "bg-[#F5B800] text-[#1A2744]" : i === 1 ? "bg-gray-400 text-gray-800" : i === 2 ? "bg-orange-400 text-orange-900" : "bg-white/10 text-white/70"}`}>
-                                            {i + 1}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-white truncate">{venue.name}</p>
-                                            <p className="text-xs text-white/50">{venue.bookings} bookings</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-semibold text-white">{formatCurrency(venue.revenue).replace("Rp ", "")}</p>
-                                            <p className="text-xs text-green-400">{venue.growth}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </Card>
-                    </motion.div>
-                </div>
-
-                {/* Growth Metrics */}
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6">
-                    <Card className="p-6 bg-white/5 border-white/10">
-                        <h2 className="text-lg font-bold text-white mb-4">User & Booking Growth</h2>
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <p className="text-white/50 text-sm mb-4">Users Bulanan</p>
-                                <div className="flex items-end gap-2 h-32">
-                                    {monthlyData.map((data) => (
-                                        <div key={data.month} className="flex-1 flex flex-col items-center">
-                                            <div className="w-full bg-blue-500 rounded-t" style={{ height: `${(data.users / 3500) * 100}px` }} />
-                                            <p className="text-xs text-white/30 mt-1">{data.month}</p>
-                                        </div>
-                                    ))}
+                                <div className="flex-1">
+                                    <p className={`font-medium ${styles.textPrimary}`}>{venue.name}</p>
+                                    <p className={`text-sm ${styles.textDimmed}`}>{venue.bookings} booking</p>
                                 </div>
-                            </div>
-                            <div>
-                                <p className="text-white/50 text-sm mb-4">Bookings Bulanan</p>
-                                <div className="flex items-end gap-2 h-32">
-                                    {monthlyData.map((data) => (
-                                        <div key={data.month} className="flex-1 flex flex-col items-center">
-                                            <div className="w-full bg-green-500 rounded-t" style={{ height: `${(data.bookings / 720) * 100}px` }} />
-                                            <p className="text-xs text-white/30 mt-1">{data.month}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
+                                <p className={`font-bold ${isDark ? "text-purple-400" : "text-purple-600"}`}>Rp {(venue.revenue / 1000000).toFixed(1)} Jt</p>
+                            </motion.div>
+                        ))}
+                    </div>
                 </motion.div>
             </div>
-        </main>
+        </div>
     );
+}
+
+export default function AdminAnalyticsPage() {
+    return <AdminLayout><AnalyticsContent /></AdminLayout>;
 }

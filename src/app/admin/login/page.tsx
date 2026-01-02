@@ -3,18 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Shield, Mail, Lock, Loader2, AlertCircle } from "lucide-react";
+import { Shield, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default function AdminLoginPage() {
     const router = useRouter();
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -22,102 +20,85 @@ export default function AdminLoginPage() {
         setError("");
 
         try {
-            // Simulate admin login - replace with actual API
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Check for admin credentials (demo)
-            if (formData.email === "admin@kumpulmain.id" && formData.password === "admin123") {
-                localStorage.setItem("adminToken", "admin-jwt-token");
-                localStorage.setItem("adminUser", JSON.stringify({
-                    id: "admin-1",
-                    name: "Super Admin",
-                    email: formData.email,
-                    role: "ADMIN"
-                }));
+            if (form.email === "admin@kumpulmain.id" && form.password === "admin123") {
+                localStorage.setItem("adminToken", "admin-token-123");
+                localStorage.setItem("adminUser", JSON.stringify({ email: form.email, name: "Admin" }));
                 router.push("/admin/dashboard");
             } else {
                 setError("Email atau password salah");
             }
-        } catch (err) {
-            setError("Terjadi kesalahan. Silakan coba lagi.");
+        } catch {
+            setError("Terjadi kesalahan, coba lagi");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-[#1A2744] via-[#0D1520] to-[#1A2744] flex items-center justify-center p-4">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#F5B800]/5 rounded-full blur-3xl" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
-            </div>
-
+        <main className="min-h-screen bg-gradient-to-br from-slate-100 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
             <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="relative w-full max-w-md"
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="w-full max-w-md"
             >
-                {/* Logo */}
-                <div className="text-center mb-8">
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#F5B800] to-[#D4A000] flex items-center justify-center">
-                        <Shield className="w-10 h-10 text-white" />
+                <Card className="p-8 bg-white border-slate-200 shadow-xl shadow-indigo-500/10">
+                    {/* Logo */}
+                    <div className="text-center mb-8">
+                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30">
+                            <Shield className="w-8 h-8 text-white" />
+                        </div>
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            Admin Panel
+                        </h1>
+                        <p className="text-slate-500 text-sm mt-1">KumpulMain.id</p>
                     </div>
-                    <h1 className="text-3xl font-bold text-white">Admin Panel</h1>
-                    <p className="text-white/50 mt-2">KumpulMain.id</p>
-                </div>
 
-                <Card className="p-8 bg-white/5 backdrop-blur-xl border-white/10">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {error && (
-                            <motion.div
-                                initial={{ scale: 0.95, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3"
-                            >
-                                <AlertCircle className="w-5 h-5 text-red-400" />
-                                <p className="text-red-400 text-sm">{error}</p>
-                            </motion.div>
-                        )}
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                            {error}
+                        </div>
+                    )}
 
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-white/70 mb-2">
-                                Email Admin
-                            </label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-                                <input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[#F5B800] focus:ring-0 transition-colors"
-                                    placeholder="admin@kumpulmain.id"
-                                    required
-                                />
-                            </div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                            <input
+                                type="email"
+                                value={form.email}
+                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+                                placeholder="admin@kumpulmain.id"
+                                required
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-white/70 mb-2">
-                                Password
-                            </label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
                                 <input
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[#F5B800] focus:ring-0 transition-colors"
+                                    type={showPassword ? "text" : "password"}
+                                    value={form.password}
+                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all pr-12"
                                     placeholder="••••••••"
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full py-4 text-lg"
                             disabled={loading}
+                            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/30"
                         >
                             {loading ? (
                                 <>
@@ -126,17 +107,19 @@ export default function AdminLoginPage() {
                                 </>
                             ) : (
                                 <>
-                                    <Shield className="w-5 h-5 mr-2" />
+                                    <Lock className="w-5 h-5 mr-2" />
                                     Masuk ke Admin
                                 </>
                             )}
                         </Button>
                     </form>
-                </Card>
 
-                <p className="text-center text-white/30 text-sm mt-6">
-                    Akses hanya untuk administrator terotorisasi
-                </p>
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-slate-500">
+                            Demo: admin@kumpulmain.id / admin123
+                        </p>
+                    </div>
+                </Card>
             </motion.div>
         </main>
     );

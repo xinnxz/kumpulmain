@@ -1,199 +1,180 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-    Settings, Shield, Bell, LogOut, Save, Loader2,
-    CreditCard, Percent, ToggleLeft, Mail, AlertTriangle, ChevronRight
-} from "lucide-react";
+import { Settings, Percent, ToggleLeft, Mail, Save, Loader2, ChevronRight, Globe } from "lucide-react";
+import { AdminLayout, useAdminTheme, adminThemeStyles } from "@/components/layout/admin-header";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 const settingsCategories = [
-    { id: "general", label: "Umum", icon: Settings },
-    { id: "commission", label: "Komisi", icon: Percent },
-    { id: "features", label: "Fitur", icon: ToggleLeft },
-    { id: "notifications", label: "Notifikasi", icon: Mail },
+    { id: "general", label: "settings.general", icon: Settings, color: "from-slate-500 to-slate-600" },
+    { id: "commission", label: "settings.commission", icon: Percent, color: "from-amber-500 to-orange-500" },
+    { id: "features", label: "settings.features", icon: ToggleLeft, color: "from-indigo-500 to-purple-500" },
+    { id: "notifications", label: "settings.notifications", icon: Mail, color: "from-emerald-500 to-teal-500" },
+    { id: "language", label: "settings.language", icon: Globe, color: "from-blue-500 to-cyan-500" },
 ];
 
-export default function AdminSettingsPage() {
-    const router = useRouter();
+function SettingsContent() {
+    const { isDark, t, language, setLanguage } = useAdminTheme();
+    const styles = adminThemeStyles[isDark ? "dark" : "light"];
     const [activeCategory, setActiveCategory] = useState("general");
     const [saving, setSaving] = useState(false);
-
     const [settings, setSettings] = useState({
-        platformName: "KumpulMain.id",
-        supportEmail: "support@kumpulmain.id",
-        commissionRate: 10,
-        minPayout: 100000,
-        maxBookingDays: 30,
-        joinanEnabled: true,
-        reviewsEnabled: true,
-        payoutsEnabled: true,
-        maintenanceMode: false,
-        emailNewBooking: true,
-        emailPaymentReceived: true,
-        emailNewVenue: true,
-        emailDailyReport: false,
+        platformName: "KumpulMain.id", supportEmail: "support@kumpulmain.id",
+        commissionRate: 10, minPayout: 100000, maxBookingDays: 30,
+        joinanEnabled: true, reviewsEnabled: true, payoutsEnabled: true, maintenanceMode: false,
+        emailNewBooking: true, emailPaymentReceived: true, emailNewVenue: true, emailDailyReport: false,
     });
 
-    const handleSave = async () => {
-        setSaving(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setSaving(false);
-    };
+    const handleSave = async () => { setSaving(true); await new Promise(r => setTimeout(r, 1500)); setSaving(false); };
+    const activeConfig = settingsCategories.find(c => c.id === activeCategory);
+
+    const Toggle = ({ checked, onChange, danger }: { checked: boolean; onChange: () => void; danger?: boolean }) => (
+        <button onClick={onChange}
+            className={`relative w-12 h-7 rounded-full transition-colors ${checked ? (danger ? "bg-red-500" : "bg-indigo-500") : (isDark ? "bg-white/20" : "bg-slate-300")}`}>
+            <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-6" : "translate-x-1"}`} />
+        </button>
+    );
 
     return (
-        <main className="min-h-screen bg-[#0D1520]">
-            <header className="bg-[#1A2744] border-b border-white/10 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3"><Shield className="w-8 h-8 text-[#F5B800]" /><span className="text-xl font-bold text-white">Admin Panel</span></div>
-                        <div className="flex items-center gap-4">
-                            <button className="relative p-2 text-white/70 hover:text-white"><Bell className="w-6 h-6" /></button>
-                            <button onClick={() => router.push("/admin/login")} className="p-2 text-white/70 hover:text-red-400"><LogOut className="w-5 h-5" /></button>
-                        </div>
+        <div className="max-w-5xl mx-auto px-6 py-8">
+            <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8">
+                <h1 className={`text-3xl font-bold ${styles.textPrimary} flex items-center gap-3`}>
+                    <div className="w-12 h-12 bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <Settings className="w-6 h-6 text-white" />
                     </div>
-                </div>
-            </header>
+                    {t("settings.title")}
+                </h1>
+                <p className={`${styles.textMuted} mt-2`}>{t("settings.description")}</p>
+            </motion.div>
 
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8">
-                    <Link href="/admin/dashboard" className="text-white/50 hover:text-white text-sm mb-2 inline-block">← Kembali ke Dashboard</Link>
-                    <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                        <Settings className="w-8 h-8 text-[#F5B800]" />
-                        Pengaturan Platform
-                    </h1>
-                    <p className="text-white/50 mt-1">Konfigurasi dan preferensi platform</p>
+            <div className="grid md:grid-cols-4 gap-6">
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
+                    <div className={`${styles.cardBg} border rounded-2xl p-2 space-y-1`}>
+                        {settingsCategories.map((cat) => (
+                            <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
+                                className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${activeCategory === cat.id
+                                    ? (isDark ? "bg-white/10 text-white border border-white/20" : "bg-indigo-50 text-indigo-700 border border-indigo-200")
+                                    : styles.textMuted + " hover:" + styles.textPrimary}`}>
+                                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
+                                    <cat.icon className="w-4 h-4 text-white" />
+                                </div>
+                                <span className="font-medium flex-1">{t(cat.label)}</span>
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        ))}
+                    </div>
                 </motion.div>
 
-                <div className="grid md:grid-cols-4 gap-6">
-                    {/* Sidebar */}
-                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-                        <Card className="p-2 bg-white/5 border-white/10">
-                            {settingsCategories.map((cat) => (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setActiveCategory(cat.id)}
-                                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${activeCategory === cat.id ? "bg-[#F5B800]/10 text-white" : "text-white/50 hover:text-white hover:bg-white/5"}`}
-                                >
-                                    <cat.icon className={`w-5 h-5 ${activeCategory === cat.id ? "text-[#F5B800]" : ""}`} />
-                                    <span className="font-medium">{cat.label}</span>
-                                    <ChevronRight className="w-4 h-4 ml-auto" />
-                                </button>
-                            ))}
-                        </Card>
-                    </motion.div>
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="md:col-span-3">
+                    <div className={`${styles.cardBg} border rounded-2xl p-6`}>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeConfig?.color} flex items-center justify-center`}>
+                                {activeConfig && <activeConfig.icon className="w-5 h-5 text-white" />}
+                            </div>
+                            <h2 className={`text-lg font-bold ${styles.textPrimary}`}>{t(activeConfig?.label || "")}</h2>
+                        </div>
 
-                    {/* Content */}
-                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="md:col-span-3">
-                        {/* General */}
                         {activeCategory === "general" && (
-                            <Card className="p-6 bg-white/5 border-white/10">
-                                <h2 className="text-lg font-bold text-white mb-6">Pengaturan Umum</h2>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-white/70 mb-2">Nama Platform</label>
-                                        <input type="text" value={settings.platformName} onChange={(e) => setSettings({ ...settings, platformName: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#F5B800] outline-none" />
+                            <div className="space-y-4">
+                                {[{ label: t("settings.platformName"), key: "platformName", type: "text" }, { label: t("settings.supportEmail"), key: "supportEmail", type: "email" }, { label: t("settings.maxBookingDays"), key: "maxBookingDays", type: "number" }].map((f) => (
+                                    <div key={f.key}>
+                                        <label className={`block text-sm font-medium ${styles.textSecondary} mb-2`}>{f.label}</label>
+                                        <input type={f.type} value={settings[f.key as keyof typeof settings] as string | number}
+                                            onChange={(e) => setSettings({ ...settings, [f.key]: f.type === "number" ? parseInt(e.target.value) : e.target.value })}
+                                            className={`w-full px-4 py-3 rounded-xl ${styles.inputBg} border ${styles.inputFocus} outline-none`} />
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-white/70 mb-2">Email Support</label>
-                                        <input type="email" value={settings.supportEmail} onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#F5B800] outline-none" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-white/70 mb-2">Maks Booking Advance (hari)</label>
-                                        <input type="number" value={settings.maxBookingDays} onChange={(e) => setSettings({ ...settings, maxBookingDays: parseInt(e.target.value) })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#F5B800] outline-none" />
-                                    </div>
-                                </div>
-                            </Card>
+                                ))}
+                            </div>
                         )}
 
-                        {/* Commission */}
                         {activeCategory === "commission" && (
-                            <Card className="p-6 bg-white/5 border-white/10">
-                                <h2 className="text-lg font-bold text-white mb-6">Pengaturan Komisi</h2>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-white/70 mb-2">Persentase Komisi (%)</label>
-                                        <div className="relative">
-                                            <input type="number" value={settings.commissionRate} onChange={(e) => setSettings({ ...settings, commissionRate: parseInt(e.target.value) })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#F5B800] outline-none" />
-                                            <Percent className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-                                        </div>
-                                        <p className="text-xs text-white/50 mt-1">Persentase yang diambil dari setiap transaksi booking</p>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-white/70 mb-2">Minimum Payout (Rp)</label>
-                                        <input type="number" value={settings.minPayout} onChange={(e) => setSettings({ ...settings, minPayout: parseInt(e.target.value) })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#F5B800] outline-none" />
+                            <div className="space-y-4">
+                                <div>
+                                    <label className={`block text-sm font-medium ${styles.textSecondary} mb-2`}>{t("settings.commissionRate")}</label>
+                                    <div className="relative">
+                                        <input type="number" value={settings.commissionRate} onChange={(e) => setSettings({ ...settings, commissionRate: parseInt(e.target.value) })}
+                                            className={`w-full px-4 py-3 rounded-xl ${styles.inputBg} border ${styles.inputFocus} outline-none`} />
+                                        <Percent className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 ${styles.textDimmed}`} />
                                     </div>
                                 </div>
-                            </Card>
+                                <div>
+                                    <label className={`block text-sm font-medium ${styles.textSecondary} mb-2`}>{t("settings.minPayout")}</label>
+                                    <input type="number" value={settings.minPayout} onChange={(e) => setSettings({ ...settings, minPayout: parseInt(e.target.value) })}
+                                        className={`w-full px-4 py-3 rounded-xl ${styles.inputBg} border ${styles.inputFocus} outline-none`} />
+                                </div>
+                            </div>
                         )}
 
-                        {/* Features */}
                         {activeCategory === "features" && (
-                            <Card className="p-6 bg-white/5 border-white/10">
-                                <h2 className="text-lg font-bold text-white mb-6">Fitur Platform</h2>
-                                <div className="space-y-4">
-                                    {[
-                                        { key: "joinanEnabled", label: "Fitur Joinan", desc: "Aktifkan fitur main bareng" },
-                                        { key: "reviewsEnabled", label: "Review & Rating", desc: "Izinkan user memberikan review" },
-                                        { key: "payoutsEnabled", label: "Pencairan Dana", desc: "Aktifkan fitur payout untuk pengelola" },
-                                        { key: "maintenanceMode", label: "Maintenance Mode", desc: "Nonaktifkan sementara platform", danger: true },
-                                    ].map((feature) => (
-                                        <div key={feature.key} className={`flex items-center justify-between p-4 rounded-xl ${feature.danger ? "bg-red-500/10 border border-red-500/20" : "bg-white/5"}`}>
-                                            <div>
-                                                <p className={`font-medium ${feature.danger ? "text-red-400" : "text-white"}`}>{feature.label}</p>
-                                                <p className="text-sm text-white/50">{feature.desc}</p>
-                                            </div>
-                                            <button
-                                                onClick={() => setSettings({ ...settings, [feature.key]: !settings[feature.key as keyof typeof settings] })}
-                                                className={`relative w-12 h-7 rounded-full transition-colors ${settings[feature.key as keyof typeof settings] ? (feature.danger ? "bg-red-500" : "bg-[#F5B800]") : "bg-white/20"}`}
-                                            >
-                                                <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${settings[feature.key as keyof typeof settings] ? "translate-x-6" : "translate-x-1"}`} />
-                                            </button>
+                            <div className="space-y-3">
+                                {[{ key: "joinanEnabled", label: t("settings.joinanEnabled"), desc: t("settings.joinanDesc") }, { key: "reviewsEnabled", label: t("settings.reviewsEnabled"), desc: t("settings.reviewsDesc") }, { key: "payoutsEnabled", label: t("settings.payoutsEnabled"), desc: t("settings.payoutsDesc") }, { key: "maintenanceMode", label: t("settings.maintenanceMode"), desc: t("settings.maintenanceDesc"), danger: true }].map((f) => (
+                                    <div key={f.key} className={`flex items-center justify-between p-4 rounded-xl ${f.danger ? (isDark ? "bg-red-500/10 border border-red-500/20" : "bg-red-50 border border-red-200") : (isDark ? "bg-white/5" : "bg-slate-50")}`}>
+                                        <div>
+                                            <p className={`font-medium ${f.danger ? "text-red-500" : styles.textPrimary}`}>{f.label}</p>
+                                            <p className={`text-sm ${styles.textDimmed}`}>{f.desc}</p>
                                         </div>
-                                    ))}
-                                </div>
-                            </Card>
+                                        <Toggle checked={settings[f.key as keyof typeof settings] as boolean} onChange={() => setSettings({ ...settings, [f.key]: !settings[f.key as keyof typeof settings] })} danger={f.danger} />
+                                    </div>
+                                ))}
+                            </div>
                         )}
 
-                        {/* Notifications */}
                         {activeCategory === "notifications" && (
-                            <Card className="p-6 bg-white/5 border-white/10">
-                                <h2 className="text-lg font-bold text-white mb-6">Notifikasi Email Admin</h2>
-                                <div className="space-y-4">
-                                    {[
-                                        { key: "emailNewBooking", label: "Booking Baru" },
-                                        { key: "emailPaymentReceived", label: "Pembayaran Diterima" },
-                                        { key: "emailNewVenue", label: "Venue Baru" },
-                                        { key: "emailDailyReport", label: "Laporan Harian" },
-                                    ].map((notif) => (
-                                        <div key={notif.key} className="flex items-center justify-between py-3 border-b border-white/10">
-                                            <span className="text-white">{notif.label}</span>
-                                            <button
-                                                onClick={() => setSettings({ ...settings, [notif.key]: !settings[notif.key as keyof typeof settings] })}
-                                                className={`relative w-12 h-7 rounded-full transition-colors ${settings[notif.key as keyof typeof settings] ? "bg-[#F5B800]" : "bg-white/20"}`}
-                                            >
-                                                <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${settings[notif.key as keyof typeof settings] ? "translate-x-6" : "translate-x-1"}`} />
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </Card>
+                            <div className="space-y-3">
+                                {[{ key: "emailNewBooking", label: t("settings.newBooking") }, { key: "emailPaymentReceived", label: t("settings.paymentReceived") }, { key: "emailNewVenue", label: t("settings.newVenue") }, { key: "emailDailyReport", label: t("settings.dailyReport") }].map((n) => (
+                                    <div key={n.key} className={`flex items-center justify-between py-3 border-b ${isDark ? "border-white/10" : "border-slate-200"}`}>
+                                        <span className={styles.textSecondary}>{n.label}</span>
+                                        <Toggle checked={settings[n.key as keyof typeof settings] as boolean} onChange={() => setSettings({ ...settings, [n.key]: !settings[n.key as keyof typeof settings] })} />
+                                    </div>
+                                ))}
+                            </div>
                         )}
 
-                        {/* Save Button */}
+                        {activeCategory === "language" && (
+                            <div className="space-y-4">
+                                <p className={`text-sm ${styles.textMuted} mb-4`}>{t("settings.selectLanguage")}</p>
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <button onClick={() => setLanguage("id")}
+                                        className={`p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${language === "id"
+                                            ? "border-indigo-500 bg-indigo-500/10"
+                                            : isDark ? "border-white/10 hover:border-white/30" : "border-slate-200 hover:border-slate-300"}`}>
+                                        <span className="text-3xl">🇮🇩</span>
+                                        <div className="text-left">
+                                            <p className={`font-bold ${styles.textPrimary}`}>{t("settings.indonesian")}</p>
+                                            <p className={`text-sm ${styles.textMuted}`}>Bahasa Indonesia</p>
+                                        </div>
+                                        {language === "id" && <div className="ml-auto w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center"><span className="text-white text-xs">✓</span></div>}
+                                    </button>
+                                    <button onClick={() => setLanguage("en")}
+                                        className={`p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${language === "en"
+                                            ? "border-indigo-500 bg-indigo-500/10"
+                                            : isDark ? "border-white/10 hover:border-white/30" : "border-slate-200 hover:border-slate-300"}`}>
+                                        <span className="text-3xl">🇺🇸</span>
+                                        <div className="text-left">
+                                            <p className={`font-bold ${styles.textPrimary}`}>{t("settings.english")}</p>
+                                            <p className={`text-sm ${styles.textMuted}`}>English</p>
+                                        </div>
+                                        {language === "en" && <div className="ml-auto w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center"><span className="text-white text-xs">✓</span></div>}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {activeCategory !== "language" && (
                         <div className="mt-6 flex justify-end">
-                            <Button onClick={handleSave} disabled={saving} className="bg-[#F5B800] text-[#1A2744] hover:bg-[#FFD740]">
-                                {saving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Menyimpan...</> : <><Save className="w-4 h-4 mr-2" /> Simpan Pengaturan</>}
+                            <Button onClick={handleSave} disabled={saving} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6">
+                                {saving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t("settings.saving")}</> : <><Save className="w-4 h-4 mr-2" /> {t("settings.save")}</>}
                             </Button>
                         </div>
-                    </motion.div>
-                </div>
+                    )}
+                </motion.div>
             </div>
-        </main>
+        </div>
     );
+}
+
+export default function AdminSettingsPage() {
+    return <AdminLayout><SettingsContent /></AdminLayout>;
 }
