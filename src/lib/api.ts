@@ -81,3 +81,23 @@ export const notificationsApi = {
     markAsRead: (id: string) => api.patch(`/notifications/${id}/read`),
     markAllAsRead: () => api.patch("/notifications/read-all"),
 };
+
+// Pengelola API - Venue Management
+export const pengelolaApi = {
+    // Dashboard
+    getDashboard: () => api.get("/pengelola/dashboard"),
+
+    // Venues
+    getVenues: () => api.get("/pengelola/venues"),
+    getVenue: (id: string) => api.get(`/pengelola/venues/${id}`),
+    createVenue: (data: any) => api.post("/pengelola/venues", data),
+    updateVenue: (id: string, data: any) => api.put(`/pengelola/venues/${id}`, data),
+    deleteVenue: (id: string) => api.delete(`/pengelola/venues/${id}`),
+
+    // Bookings
+    getBookings: (params?: Record<string, string>) =>
+        api.get("/pengelola/bookings", { params }),
+    updateBookingStatus: (id: string, status: string) =>
+        api.patch(`/pengelola/bookings/${id}/status`, { status }),
+};
+

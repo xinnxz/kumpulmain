@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     Settings, Shield, Bell, LogOut, Save, Loader2,
-    CreditCard, Percent, Toggle, Mail, AlertTriangle, ChevronRight
+    CreditCard, Percent, ToggleLeft, Mail, AlertTriangle, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
