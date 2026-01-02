@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { MapPin, Star, Clock, Users, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, getVenueUrl } from "@/lib/utils";
 import type { Venue } from "@/types";
 
 // Sport badge styles with gradients
@@ -81,13 +81,13 @@ export function VenueCard({ venue }: VenueCardProps) {
     const imageUrl = venue.images?.[0] || getVenueImage(venue.id, venue.venueType || "futsal");
     const badgeStyle = sportBadgeStyles[sportType] || sportBadgeStyles.default;
 
-    // Generate slug from venue name
-    const slug = venue.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    // Get venue URL using slug
+    const venueUrl = getVenueUrl(venue);
 
     return (
         <Card hover variant="elevated" className="overflow-hidden h-full group">
             {/* Image - Clickable */}
-            <Link href={`/venues/${slug}-${venue.id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
+            <Link href={venueUrl} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
                 <img
                     src={imageUrl}
                     alt={venue.name}
@@ -149,7 +149,7 @@ export function VenueCard({ venue }: VenueCardProps) {
                             <span className="text-[#8A95A5] text-sm font-normal">/jam</span>
                         </p>
                     </div>
-                    <Link href={`/venues/${slug}-${venue.id}`}>
+                    <Link href={venueUrl}>
                         <Button variant="accent" size="sm">
                             Booking
                         </Button>

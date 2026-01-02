@@ -70,9 +70,8 @@ const mockReviews = [
 
 export default function VenueDetailPage() {
     const params = useParams();
-    const rawId = params.id as string;
-    const uuidMatch = rawId.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
-    const venueId = uuidMatch ? uuidMatch[1] : rawId;
+    // Use slug directly - backend will handle lookup by slug or UUID
+    const venueSlug = params.id as string;
 
     const [venue, setVenue] = useState<Venue | null>(null);
     const [nearbyVenues, setNearbyVenues] = useState<Venue[]>([]);
@@ -88,11 +87,11 @@ export default function VenueDetailPage() {
 
     useEffect(() => {
         fetchVenue();
-    }, [venueId]);
+    }, [venueSlug]);
 
     const fetchVenue = async () => {
         try {
-            const res = await venuesApi.getById(venueId);
+            const res = await venuesApi.getById(venueSlug);
             setVenue(res.data);
 
             // Fetch nearby venues
@@ -100,7 +99,7 @@ export default function VenueDetailPage() {
                 city: res.data.city,
                 take: "5"
             });
-            setNearbyVenues(nearbyRes.data.data.filter((v: Venue) => v.id !== venueId).slice(0, 4));
+            setNearbyVenues(nearbyRes.data.data.filter((v: Venue) => v.id !== res.data.id).slice(0, 4));
 
             const today = new Date().toISOString().split("T")[0];
             setSelectedDate(today);

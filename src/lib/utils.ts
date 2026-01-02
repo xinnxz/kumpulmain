@@ -30,3 +30,28 @@ export function formatTime(time: string): string {
 export function generateInviteLink(code: string): string {
     return `https://kumpulmain.id/join/${code}`;
 }
+
+/**
+ * Generate URL-friendly slug from venue name and city
+ * Example: "Futsal Arena Jakarta" + "Jakarta" => "futsal-arena-jakarta"
+ */
+export function generateSlug(name: string, city?: string): string {
+    const text = city ? `${name} ${city}` : name;
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+        .replace(/\s+/g, '-')          // Replace spaces with hyphens
+        .replace(/-+/g, '-')           // Replace multiple hyphens with single
+        .replace(/^-|-$/g, '');        // Remove leading/trailing hyphens
+}
+
+/**
+ * Get venue URL using slug
+ */
+export function getVenueUrl(venue: { name: string; city?: string | null; slug?: string }): string {
+    if (venue.slug) {
+        return `/venues/${venue.slug}`;
+    }
+    return `/venues/${generateSlug(venue.name, venue.city || undefined)}`;
+}
+
