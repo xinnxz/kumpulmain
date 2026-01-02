@@ -1,28 +1,55 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Twitter, Youtube, MapPin, Phone, Mail, Send } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, MapPin, Phone, Mail, Send, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth-store";
 
 export function Footer() {
+    const { isAuthenticated } = useAuthStore();
+
+    const getDashboardLink = () => {
+        const user = useAuthStore.getState().user;
+        if (!user) return "/dashboard";
+        if (user.role === "ADMIN") return "/admin";
+        if (user.role === "PENGELOLA") return "/pengelola";
+        return "/dashboard";
+    };
+
     return (
         <footer className="bg-[#1A2744] text-white">
-            {/* CTA Section */}
+            {/* CTA Section - Show different content based on auth */}
             <div className="border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div>
-                            <h3 className="text-2xl font-bold mb-2">Siap untuk main?</h3>
-                            <p className="text-white/70">Gas sekarang juga broo!</p>
+                            <h3 className="text-2xl font-bold mb-2">
+                                {isAuthenticated ? "Mau booking lagi?" : "Siap untuk main?"}
+                            </h3>
+                            <p className="text-white/70">
+                                {isAuthenticated ? "Temukan venue favorit kamu sekarang!" : "Gas sekarang juga broo!"}
+                            </p>
                         </div>
-                        <Link href="/register">
-                            <Button variant="accent" size="lg">
-                                Daftar Gratis Sekarang
-                                <Send className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
+                        {isAuthenticated ? (
+                            <Link href={getDashboardLink()}>
+                                <Button variant="accent" size="lg">
+                                    Ke Dashboard
+                                    <LayoutDashboard className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        ) : (
+                            <Link href="/register">
+                                <Button variant="accent" size="lg">
+                                    Daftar Gratis Sekarang
+                                    <Send className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
+
 
             {/* Main Footer */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -16,6 +16,7 @@ export function SparringSection() {
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="order-2 lg:order-1"
                     >
                         <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-4">
@@ -60,6 +61,7 @@ export function SparringSection() {
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="order-1 lg:order-2 relative"
                     >
                         {/* Phone Mockup */}
@@ -81,7 +83,7 @@ export function SparringSection() {
                                 initial={{ opacity: 0, x: -20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: 0.3 }}
+                                transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
                                 className="absolute -left-8 top-20 bg-white rounded-xl p-4 shadow-lg border border-[#E4E8ED]"
                             >
                                 <div className="flex items-center gap-3">
@@ -103,7 +105,7 @@ export function SparringSection() {
                                 initial={{ opacity: 0, x: 20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: 0.5 }}
+                                transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
                                 className="absolute -right-8 bottom-32 bg-[#F5B800] rounded-xl p-4 shadow-lg"
                             >
                                 <p className="text-[#1A2744] font-bold">Futsal Sore</p>

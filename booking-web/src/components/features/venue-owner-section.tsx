@@ -16,6 +16,7 @@ export function VenueOwnerSection() {
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="relative"
                     >
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl">
@@ -40,7 +41,7 @@ export function VenueOwnerSection() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: 0.3 }}
+                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
                             className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-xl border border-[#E4E8ED]"
                         >
                             <div className="flex items-center gap-4">
@@ -60,6 +61,7 @@ export function VenueOwnerSection() {
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                     >
                         <span className="inline-block px-4 py-1.5 rounded-full bg-[#344D7A]/10 text-[#344D7A] text-sm font-semibold mb-4">
                             🏢 Partner Venue

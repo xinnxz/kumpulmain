@@ -89,11 +89,11 @@ export default function JoinanPage() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center mb-8"
                     >
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4">
+                        {/* <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4">
                             👥 Main Bareng
-                        </span>
+                        </span> */}
                         <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2744] mb-3">
-                            Cari Teman Main
+                            Gas Mabar!
                         </h1>
                         <p className="text-[#5A6A7E] max-w-lg mx-auto">
                             Join undangan olahraga, bisa patungan biar lebih hemat!

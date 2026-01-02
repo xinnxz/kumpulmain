@@ -238,6 +238,7 @@ export function FeaturedVenuesSection({ venues = [] }: FeaturedVenuesSectionProp
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
                             className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-3"
                         >
                             ✨ Venue Populer
@@ -246,7 +247,7 @@ export function FeaturedVenuesSection({ venues = [] }: FeaturedVenuesSectionProp
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: 0.1 }}
+                            transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
                             className="text-3xl font-bold text-[#1A2744]"
                         >
                             Rekomendasi Venue Terbaik
@@ -268,7 +269,7 @@ export function FeaturedVenuesSection({ venues = [] }: FeaturedVenuesSectionProp
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            transition={{ delay: 0.1 + index * 0.15, duration: 0.8, ease: "easeOut" }}
                         >
                             <VenueCard venue={venue} />
                         </motion.div>

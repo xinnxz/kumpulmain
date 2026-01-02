@@ -108,14 +108,14 @@ export default function VenuesPage() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center mb-8"
                     >
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4">
+                        {/* <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4">
                             🏟️ Temukan Venue
-                        </span>
+                        </span> */}
                         <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2744] mb-3">
-                            Cari Venue Olahraga
+                            Cari Lapangan Olahraga
                         </h1>
                         <p className="text-[#5A6A7E] max-w-lg mx-auto">
-                            Pilih venue terbaik di kotamu. Booking mudah murah, Yu buruan main bareng!
+                            Pilih lapangan olahraga terbaik di kotamu. Booking mudah murah, Yu booking sekarang!
                         </p>
                     </motion.div>
 

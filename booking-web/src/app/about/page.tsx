@@ -94,10 +94,10 @@ const testimonials = [
 ];
 
 const milestones = [
-    { year: "2024", event: "KumpulMain.id didirikan dengan misi menghubungkan pecinta olahraga" },
-    { year: "2024", event: "Meluncurkan fitur Joinan/Main Bareng pertama di Indonesia" },
-    { year: "2025", event: "Mencapai 1.000 venue partner di 20 kota" },
-    { year: "2025", event: "Meluncurkan fitur Kompetisi untuk turnamen amatir" },
+    { year: "2026", event: "KumpulMain.id didirikan dengan misi menghubungkan pecinta olahraga" },
+    { year: "2026", event: "Meluncurkan fitur Joinan/Main Bareng pertama di Indonesia" },
+    { year: "2026", event: "Mencapai 1.000 venue partner di 20 kota" },
+    { year: "2026", event: "Meluncurkan fitur Kompetisi untuk turnamen amatir" },
     { year: "2026", event: "Ekspansi ke 30 kota dengan 50.000+ pengguna aktif" },
 ];
 
@@ -201,7 +201,7 @@ export default function AboutPage() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/60 to-transparent" />
                             </div>
                             <div className="absolute -bottom-6 -left-6 bg-[#F5B800] rounded-2xl p-6 shadow-lg">
-                                <p className="text-4xl font-bold text-[#1A2744]">2024</p>
+                                <p className="text-4xl font-bold text-[#1A2744]">2026</p>
                                 <p className="text-[#1A2744]/70">Didirikan</p>
                             </div>
                         </motion.div>

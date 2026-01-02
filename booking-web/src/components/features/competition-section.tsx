@@ -8,7 +8,7 @@ import { Trophy, ChevronRight } from "lucide-react";
 const competitions = [
     {
         id: 1,
-        title: "Liga Futsal Jakarta 2024",
+        title: "Liga Futsal Jakarta 2026",
         image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&q=80",
         category: "Futsal",
         teams: 16,
@@ -46,6 +46,7 @@ export function CompetitionSection() {
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4"
                     >
                         🏆 Kompetisi
@@ -54,16 +55,16 @@ export function CompetitionSection() {
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
+                        transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
                         className="text-3xl font-bold text-[#1A2744] mb-4"
                     >
-                        Cari kompetisi terbaik untuk tim Anda!
+                        Cari kompetisi terbaik untuk tim kamu!
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
+                        transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
                         className="text-[#5A6A7E]"
                     >
                         Ikuti berbagai kompetisi olahraga dan buktikan kemampuan tim Anda
@@ -78,7 +79,7 @@ export function CompetitionSection() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            transition={{ delay: 0.2 + index * 0.15, duration: 0.8, ease: "easeOut" }}
                         >
                             <Link href={`/competitions/${comp.id}`} className="group block">
                                 <div className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">

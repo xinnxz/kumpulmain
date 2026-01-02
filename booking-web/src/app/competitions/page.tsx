@@ -140,7 +140,7 @@ export default function CompetitionsPage() {
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
                             Cari Kompetisi Terbaik
-                            <span className="block text-[#F5B800]">untuk Tim Anda!</span>
+                            <span className="block text-[#F5B800]">untuk Tim Kamu!</span>
                         </h1>
                         <p className="text-lg text-white/70 mb-8">
                             Ikuti berbagai pilihan kompetisi dari seluruh Indonesia.

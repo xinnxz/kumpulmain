@@ -263,30 +263,6 @@ export default function PartnerPage() {
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <section className="py-20 bg-gradient-to-br from-[#1A2744] via-[#344D7A] to-[#1A2744]">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                            Siap Mengembangkan Bisnis Venue Kamu?
-                        </h2>
-                        <p className="text-xl text-white/70 mb-8">
-                            Daftar sekarang dan mulai terima booking dari ribuan pemain di seluruh Indonesia
-                        </p>
-                        <Link href="/partner/register">
-                            <Button size="lg" className="text-lg px-10 py-4">
-                                Daftar Gratis Sekarang
-                                <ArrowRight className="w-5 h-5 ml-2" />
-                            </Button>
-                        </Link>
-                    </motion.div>
-                </div>
-            </section>
-
             <Footer />
         </main>
     );

@@ -17,7 +17,7 @@ export function Navbar() {
     const { user, isAuthenticated, logout } = useAuthStore();
 
     const navLinks = [
-        { href: "/venues", label: "Cari Venue" },
+        { href: "/venues", label: "Sewa Lapang" },
         { href: "/joinan", label: "Main Bareng" },
         { href: "/competitions", label: "Kompetisi" },
         { href: "/partner", label: "Partner" },

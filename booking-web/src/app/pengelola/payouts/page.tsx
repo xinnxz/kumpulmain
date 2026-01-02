@@ -50,8 +50,8 @@ const payouts = [
         accountNumber: "****1234",
         accountName: "Ahmad Pratama",
         status: "success",
-        requestDate: "2025-12-30",
-        completedDate: "2025-12-31",
+        requestDate: "2026-12-30",
+        completedDate: "2026-12-31",
     },
     {
         id: "PAY-005",
@@ -60,7 +60,7 @@ const payouts = [
         accountNumber: "****1234",
         accountName: "Ahmad Pratama",
         status: "failed",
-        requestDate: "2025-12-25",
+        requestDate: "2026-12-25",
         completedDate: null,
         failedReason: "Nomor rekening tidak valid",
     },
@@ -164,8 +164,8 @@ export default function PengelolaPayoutsPage() {
                                 key={f}
                                 onClick={() => setFilter(f)}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === f
-                                        ? "bg-[#F5B800] text-[#1A2744]"
-                                        : "bg-white text-[#8A95A5] hover:bg-gray-100"
+                                    ? "bg-[#F5B800] text-[#1A2744]"
+                                    : "bg-white text-[#8A95A5] hover:bg-gray-100"
                                     }`}
                             >
                                 {f === "all" ? "Semua" : statusConfig[f]?.label || f}

@@ -19,6 +19,7 @@ export function CTASection() {
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                     >
                         <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/20 text-[#F5B800] text-sm font-semibold mb-6">
                             🎯 Siap untuk Main?
@@ -84,6 +85,7 @@ export function CTASection() {
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="hidden lg:block"
                     >
                         <div className="relative">
@@ -100,7 +102,7 @@ export function CTASection() {
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: 0.3 }}
+                                transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
                                 className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-5 shadow-2xl"
                             >
                                 <div className="flex items-center space-x-4">
@@ -119,7 +121,7 @@ export function CTASection() {
                                 initial={{ opacity: 0, y: -20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: 0.5 }}
+                                transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
                                 className="absolute -top-4 -right-4 bg-[#F5B800] rounded-2xl px-5 py-4 shadow-lg"
                             >
                                 <p className="text-[#344D7A] font-bold text-lg">10.000+</p>

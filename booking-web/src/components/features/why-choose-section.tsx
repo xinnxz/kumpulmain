@@ -37,6 +37,7 @@ export function WhyChooseSection() {
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                     >
                         <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4">
                             ⭐ Kenapa Kami
@@ -57,7 +58,7 @@ export function WhyChooseSection() {
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
+                                    transition={{ delay: 0.2 + i * 0.15, duration: 0.7, ease: "easeOut" }}
                                     className="bg-white rounded-xl p-5 shadow-sm border border-[#E4E8ED] hover:border-[#F5B800]/50 hover:shadow-lg transition-all"
                                 >
                                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#F5B800] to-[#FFD740] flex items-center justify-center mb-4">
@@ -75,6 +76,7 @@ export function WhyChooseSection() {
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="relative"
                     >
                         {/* Main Image */}
@@ -94,7 +96,7 @@ export function WhyChooseSection() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: 0.3 }}
+                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
                             className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl"
                         >
                             <div className="flex items-center gap-4">
@@ -122,7 +124,7 @@ export function WhyChooseSection() {
                             initial={{ opacity: 0, y: -20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: 0.5 }}
+                            transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
                             className="absolute -top-4 -right-4 bg-[#344D7A] rounded-2xl px-6 py-4 text-white shadow-lg"
                         >
                             <p className="text-3xl font-bold">50K+</p>

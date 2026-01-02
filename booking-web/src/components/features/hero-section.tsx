@@ -41,7 +41,7 @@ export function HeroSection() {
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6 }}
+                        transition={{ duration: 1, ease: "easeOut" }}
                     >
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
                             Super Sport
@@ -94,7 +94,7 @@ export function HeroSection() {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                        transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
                         className="hidden lg:block"
                     >
                         <div className="bg-white rounded-3xl shadow-2xl p-6">

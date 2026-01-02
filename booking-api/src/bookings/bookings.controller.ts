@@ -87,7 +87,7 @@ export class BookingsController {
     /**
      * List booking yang bisa di-join
      * 
-     * GET /bookings/open?skip=0&take=10&venueId=xxx&date=2024-01-15
+     * GET /bookings/open?skip=0&take=10&venueId=xxx&date=2026-01-15
      */
     @Get('open')
     async findOpen(

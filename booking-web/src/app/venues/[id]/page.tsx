@@ -8,7 +8,8 @@ import {
     MapPin, Star, Clock, Users, ChevronLeft, ChevronRight,
     Wifi, Car, Coffee, Droplet, Wind, Loader2, Check, ArrowRight, Share2, Heart,
     X, Calendar, RefreshCw, Shield, Phone, MessageCircle, ChevronDown,
-    Sparkles, ThumbsUp, Award
+    Sparkles, ThumbsUp, Award, AlertCircle, Navigation, ShowerHead, UtensilsCrossed,
+    ParkingCircle, Shirt, Fan, Tv, CupSoda, Store, Dumbbell
 } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -19,23 +20,55 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { getVenueImage } from "@/components/features/venue-card";
 import type { Venue } from "@/types";
 
-// Facility icons mapping
+// Facility icons mapping - comprehensive list
 const facilityIcons: Record<string, any> = {
-    Wifi: Wifi,
-    WiFi: Wifi,
-    Parkir: Car,
+    // Wifi & Internet
+    "Wi-fi": Wifi,
+    "Wifi": Wifi,
+    "WiFi": Wifi,
+    // Parking
+    "Parkir Motor": Car,
+    "Parkir Mobil": ParkingCircle,
+    "Parkir": Car,
     "Parkir Luas": Car,
-    Kantin: Coffee,
-    Cafe: Coffee,
-    Toilet: Droplet,
+    // Food & Drinks
+    "Jual Makanan Ringan": UtensilsCrossed,
+    "Jual Minuman": CupSoda,
+    "Kantin": Coffee,
+    "Cafe": Coffee,
+    // Bathroom
+    "Toilet": Droplet,
     "Toilet Bersih": Droplet,
-    AC: Wind,
-    "Ruang Ganti": Users,
-    "Ruang Ganti AC": Wind,
-    Shower: Droplet,
-    Mushola: Sparkles,
+    "Shower": ShowerHead,
+    // Changing Room
+    "Ruang Ganti": Shirt,
+    "Ruang Ganti AC": Shirt,
+    // Comfort
+    "AC": Fan,
+    "Musholla": Sparkles,
+    "Mushola": Sparkles,
+    // Entertainment
     "Tribun Penonton": Users,
+    "TV": Tv,
+    // Shop
+    "Toko Olahraga": Store,
+    "Toko": Store,
+    // Equipment
+    "Gym": Dumbbell,
+    "Fitness": Dumbbell,
 };
+
+// Default facilities list
+const defaultFacilities = [
+    "Wi-fi",
+    "Parkir Motor",
+    "Parkir Mobil",
+    "Toilet",
+    "Musholla",
+    "Jual Makanan Ringan",
+    "Jual Minuman",
+    "Toko Olahraga",
+];
 
 // Mock reviews data
 const mockReviews = [
@@ -85,6 +118,8 @@ export default function VenueDetailPage() {
     const [showAllReviews, setShowAllReviews] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [fetchError, setFetchError] = useState(false);
+    const [showFullDesc, setShowFullDesc] = useState(false);
+    const [selectedCourt, setSelectedCourt] = useState("Lapangan 1");
 
     useEffect(() => {
         if (!venueSlug || fetchError) return;
@@ -425,24 +460,18 @@ export default function VenueDetailPage() {
 
                                 {/* Facilities */}
                                 <Card className="p-6">
-                                    <h2 className="text-lg font-bold text-[#1A2744] mb-4 flex items-center">
-                                        <Sparkles className="h-5 w-5 mr-2 text-[#F5B800]" />
-                                        Fasilitas
-                                    </h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                        {(venue.facilities || ["Parkir", "Toilet", "Wifi", "Kantin", "Ruang Ganti", "AC"]).map((facility) => {
+                                    <h2 className="text-lg font-bold text-[#1A2744] mb-4">Fasilitas</h2>
+                                    <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+                                        {(venue.facilities || defaultFacilities).map((facility) => {
                                             const Icon = facilityIcons[facility] || Check;
                                             return (
-                                                <motion.div
+                                                <div
                                                     key={facility}
-                                                    whileHover={{ scale: 1.02 }}
-                                                    className="flex items-center space-x-3 p-4 rounded-xl bg-gradient-to-br from-[#F7F8FA] to-white border border-[#E4E8ED] hover:border-[#344D7A]/30 transition-colors"
+                                                    className="flex items-center space-x-3"
                                                 >
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#344D7A]/10 to-[#344D7A]/5 flex items-center justify-center">
-                                                        <Icon className="h-5 w-5 text-[#344D7A]" />
-                                                    </div>
-                                                    <span className="text-[#1A2744] text-sm font-medium">{facility}</span>
-                                                </motion.div>
+                                                    <Icon className="h-5 w-5 text-[#5A6A7E]" />
+                                                    <span className="text-[#1A2744] text-sm">{facility}</span>
+                                                </div>
                                             );
                                         })}
                                     </div>
@@ -451,13 +480,80 @@ export default function VenueDetailPage() {
                                 {/* Description */}
                                 <Card className="p-6">
                                     <h2 className="text-lg font-bold text-[#1A2744] mb-4">Deskripsi</h2>
-                                    <p className="text-[#5A6A7E] leading-relaxed">
-                                        {venue.description || `${venue.name} adalah venue olahraga berkualitas yang terletak di ${venue.city}. 
-                                        Dengan kapasitas hingga ${venue.capacity} orang, venue ini cocok untuk berbagai 
-                                        kegiatan olahraga dan rekreasi. Dilengkapi dengan fasilitas lengkap untuk 
-                                        kenyamanan Anda termasuk parkir luas, ruang ganti, dan area istirahat.`}
-                                    </p>
+                                    <div className="relative">
+                                        <p className={`text-[#5A6A7E] leading-relaxed ${!showFullDesc && 'line-clamp-3'}`}>
+                                            {venue.description || `${venue.name} adalah venue olahraga berkualitas yang terletak di ${venue.city}. 
+                                            Dengan kapasitas hingga ${venue.capacity} orang, venue ini cocok untuk berbagai 
+                                            kegiatan olahraga dan rekreasi. Dilengkapi dengan fasilitas lengkap untuk 
+                                            kenyamanan Anda termasuk parkir luas, ruang ganti, dan area istirahat.
+                                            Kami berkomitmen memberikan pengalaman bermain olahraga terbaik dengan standar 
+                                            internasional. Lapangan kami dirawat secara berkala untuk memastikan kondisi 
+                                            selalu prima. Staff kami yang ramah siap membantu kebutuhan Anda selama bermain.`}
+                                        </p>
+                                        <button
+                                            onClick={() => setShowFullDesc(!showFullDesc)}
+                                            className="mt-2 text-[#344D7A] font-medium text-sm hover:text-[#F5B800] transition-colors flex items-center gap-1"
+                                        >
+                                            {showFullDesc ? 'Sembunyikan' : 'Lihat Selengkapnya'}
+                                            <ChevronDown className={`h-4 w-4 transition-transform ${showFullDesc ? 'rotate-180' : ''}`} />
+                                        </button>
+                                    </div>
                                 </Card>
+
+                                {/* Google Maps Location */}
+                                <Card className="p-6">
+                                    <h2 className="text-lg font-bold text-[#1A2744] mb-4 flex items-center">
+                                        <Navigation className="h-5 w-5 mr-2 text-[#F5B800]" />
+                                        Lokasi
+                                    </h2>
+                                    <div className="rounded-xl overflow-hidden h-64 mb-4">
+                                        <iframe
+                                            src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address + ', ' + venue.city + ', Indonesia')}&output=embed`}
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0 }}
+                                            allowFullScreen
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                        />
+                                    </div>
+                                    <a
+                                        href={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address + ', ' + venue.city)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-[#344D7A] font-medium text-sm hover:text-[#F5B800] transition-colors"
+                                    >
+                                        <MapPin className="h-4 w-4" />
+                                        Lihat di Google Maps
+                                        <ArrowRight className="h-4 w-4" />
+                                    </a>
+                                </Card>
+
+                                {/* Aturan Venue */}
+                                <Card className="p-6">
+                                    <h2 className="text-lg font-bold text-[#1A2744] mb-4 flex items-center">
+                                        <AlertCircle className="h-5 w-5 mr-2 text-[#F5B800]" />
+                                        Aturan Venue
+                                    </h2>
+                                    <div className="grid sm:grid-cols-2 gap-3">
+                                        {[
+                                            "Wajib menggunakan sepatu olahraga",
+                                            "Dilarang merokok di area lapangan",
+                                            "Maksimal keterlambatan 15 menit",
+                                            "Harap menjaga kebersihan area",
+                                            "Dilarang membawa makanan berat",
+                                            "Wajib mengembalikan peralatan",
+                                        ].map((rule, idx) => (
+                                            <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-[#F7F8FA]">
+                                                <div className="w-6 h-6 rounded-full bg-[#344D7A]/10 flex items-center justify-center text-[#344D7A] text-xs font-bold">
+                                                    {idx + 1}
+                                                </div>
+                                                <span className="text-[#5A6A7E] text-sm">{rule}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Card>
+
 
                                 {/* Kebijakan Section */}
                                 <Card className="p-6">
@@ -614,6 +710,27 @@ export default function VenueDetailPage() {
                                             </div>
                                         </div>
 
+                                        {/* Court Selection */}
+                                        <div className="mb-6">
+                                            <label className="block text-sm font-semibold text-[#1A2744] mb-3">
+                                                Pilih Lapangan
+                                            </label>
+                                            <div className="flex gap-2 overflow-x-auto pb-2">
+                                                {["Lapangan 1", "Lapangan 2", "Lapangan 3"].map((court) => (
+                                                    <button
+                                                        key={court}
+                                                        onClick={() => setSelectedCourt(court)}
+                                                        className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${selectedCourt === court
+                                                            ? "bg-[#344D7A] text-white shadow-lg"
+                                                            : "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
+                                                            }`}
+                                                    >
+                                                        {court}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
                                         {/* Time Slots */}
                                         <div className="mb-6">
                                             <label className="block text-sm font-semibold text-[#1A2744] mb-3">
@@ -637,6 +754,7 @@ export default function VenueDetailPage() {
                                                 ))}
                                             </div>
                                         </div>
+
 
                                         {/* Joinan Toggle */}
                                         <div className="mb-6 p-4 rounded-xl bg-[#F7F8FA]">
