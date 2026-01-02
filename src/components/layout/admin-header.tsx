@@ -11,16 +11,16 @@ import { useAdminTheme, adminThemeStyles, AdminThemeProvider } from "@/contexts/
 function AdminHeaderContent() {
     const router = useRouter();
     const pathname = usePathname();
-    const { isDark, toggleTheme, t } = useAdminTheme();
+    const { isDark, toggleTheme } = useAdminTheme();
     const [currentTime, setCurrentTime] = useState(new Date());
 
     const menuItems = [
-        { icon: LayoutDashboard, label: t("menu.dashboard"), href: "/admin/dashboard" },
-        { icon: Users, label: t("menu.users"), href: "/admin/users" },
-        { icon: Building2, label: t("menu.venues"), href: "/admin/venues" },
-        { icon: Calendar, label: t("menu.bookings"), href: "/admin/bookings" },
-        { icon: CreditCard, label: t("menu.payments"), href: "/admin/payments" },
-        { icon: BarChart3, label: t("menu.analytics"), href: "/admin/analytics" },
+        { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
+        { icon: Users, label: "Pengguna", href: "/admin/users" },
+        { icon: Building2, label: "Venue", href: "/admin/venues" },
+        { icon: Calendar, label: "Booking", href: "/admin/bookings" },
+        { icon: CreditCard, label: "Pembayaran", href: "/admin/payments" },
+        { icon: BarChart3, label: "Analitik", href: "/admin/analytics" },
     ];
 
     useEffect(() => {
@@ -35,16 +35,16 @@ function AdminHeaderContent() {
     };
 
     return (
-        <header className={`sticky top-0 z-50 backdrop-blur-xl border-b ${isDark ? "bg-white/5 border-white/10" : "bg-white/80 border-slate-200/80 shadow-sm"}`}>
+        <header className={`sticky top-0 z-50 backdrop-blur-xl border-b ${isDark ? "bg-[#1A2744]/90 border-white/10" : "bg-white/90 border-[#E4E8ED] shadow-sm"}`}>
             <div className="max-w-[1600px] mx-auto px-6">
                 <div className="flex items-center justify-between h-16">
                     <Link href="/admin/dashboard" className="flex items-center gap-3">
-                        <motion.div whileHover={{ scale: 1.05 }} className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <motion.div whileHover={{ scale: 1.05 }} className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-[#344D7A] to-[#1A2744] flex items-center justify-center shadow-lg shadow-[#344D7A]/30">
                             <Image src="/logo.png" alt="KumpulMain" width={32} height={32} className="object-contain" />
                         </motion.div>
                         <div>
-                            <h1 className={`text-lg font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{t("header.title")}</h1>
-                            <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-500"}`}>{t("header.subtitle")}</p>
+                            <h1 className={`text-lg font-bold ${isDark ? "text-white" : "text-[#1A2744]"}`}>Pusat Kontrol</h1>
+                            <p className={`text-xs ${isDark ? "text-white/50" : "text-[#5A6A7E]"}`}>KumpulMain.id Admin</p>
                         </div>
                     </Link>
 
@@ -54,8 +54,12 @@ function AdminHeaderContent() {
                             return (
                                 <Link key={item.href} href={item.href}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all ${isActive
-                                        ? isDark ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-indigo-500/30" : "bg-gradient-to-r from-blue-50 to-purple-50 text-indigo-700 border border-indigo-200"
-                                        : isDark ? "text-white/60 hover:text-white hover:bg-white/5" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"}`}>
+                                        ? isDark
+                                            ? "bg-[#F5B800]/10 text-[#F5B800] border border-[#F5B800]/30"
+                                            : "bg-[#F5B800]/10 text-[#1A2744] border border-[#F5B800]/50"
+                                        : isDark
+                                            ? "text-white/60 hover:text-white hover:bg-white/5"
+                                            : "text-[#5A6A7E] hover:text-[#1A2744] hover:bg-[#F7F8FA]"}`}>
                                     <item.icon className="w-4 h-4" />{item.label}
                                 </Link>
                             );
@@ -63,37 +67,37 @@ function AdminHeaderContent() {
                     </nav>
 
                     <div className="flex items-center gap-3">
-                        <div className={`hidden md:flex items-center gap-2 px-4 py-2 rounded-full ${isDark ? "bg-white/5 border border-white/10" : "bg-slate-100 border border-slate-200"}`}>
-                            <Clock className={`w-4 h-4 ${isDark ? "text-indigo-400" : "text-indigo-600"}`} />
-                            <span className={`text-sm font-mono ${isDark ? "text-white" : "text-slate-700"}`}>
+                        <div className={`hidden md:flex items-center gap-2 px-4 py-2 rounded-full ${isDark ? "bg-white/5 border border-white/10" : "bg-[#F7F8FA] border border-[#E4E8ED]"}`}>
+                            <Clock className={`w-4 h-4 ${isDark ? "text-[#F5B800]" : "text-[#344D7A]"}`} />
+                            <span className={`text-sm font-mono ${isDark ? "text-white" : "text-[#1A2744]"}`}>
                                 {currentTime.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
                             </span>
                         </div>
 
-                        <motion.button whileTap={{ scale: 0.95 }} onClick={toggleTheme} title={isDark ? t("header.lightMode") : t("header.darkMode")}
-                            className={`p-2 rounded-xl transition-colors ${isDark ? "bg-white/5 border border-white/10 hover:bg-white/10 text-amber-400" : "bg-slate-100 border border-slate-200 hover:bg-slate-200 text-indigo-600"}`}>
+                        <motion.button whileTap={{ scale: 0.95 }} onClick={toggleTheme} title={isDark ? "Mode Terang" : "Mode Gelap"}
+                            className={`p-2 rounded-xl transition-colors ${isDark ? "bg-white/5 border border-white/10 hover:bg-white/10 text-[#F5B800]" : "bg-[#F7F8FA] border border-[#E4E8ED] hover:bg-[#E4E8ED] text-[#344D7A]"}`}>
                             {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </motion.button>
 
-                        <button className={`relative p-2 rounded-xl transition-colors ${isDark ? "bg-white/5 border border-white/10 hover:bg-white/10" : "bg-slate-100 border border-slate-200 hover:bg-slate-200"}`}>
-                            <Bell className={`w-5 h-5 ${isDark ? "text-white/70" : "text-slate-600"}`} />
-                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">5</span>
+                        <button className={`relative p-2 rounded-xl transition-colors ${isDark ? "bg-white/5 border border-white/10 hover:bg-white/10" : "bg-[#F7F8FA] border border-[#E4E8ED] hover:bg-[#E4E8ED]"}`}>
+                            <Bell className={`w-5 h-5 ${isDark ? "text-white/70" : "text-[#5A6A7E]"}`} />
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#F5B800] text-[#1A2744] text-xs rounded-full flex items-center justify-center font-bold">5</span>
                         </button>
 
-                        <div className={`w-px h-8 ${isDark ? "bg-white/10" : "bg-slate-200"}`} />
+                        <div className={`w-px h-8 ${isDark ? "bg-white/10" : "bg-[#E4E8ED]"}`} />
 
                         <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 flex items-center justify-center ring-2 ring-indigo-400/30">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#344D7A] to-[#1A2744] flex items-center justify-center ring-2 ring-[#F5B800]/30">
                                 <span className="text-white font-bold text-sm">A</span>
                             </div>
                             <div className="hidden sm:block">
-                                <p className={`text-sm font-medium ${isDark ? "text-white" : "text-slate-900"}`}>Admin</p>
-                                <p className={`text-xs ${isDark ? "text-white/50" : "text-slate-500"}`}>Super Admin</p>
+                                <p className={`text-sm font-medium ${isDark ? "text-white" : "text-[#1A2744]"}`}>Admin</p>
+                                <p className={`text-xs ${isDark ? "text-white/50" : "text-[#5A6A7E]"}`}>Super Admin</p>
                             </div>
                         </div>
 
-                        <button onClick={handleLogout} title={t("header.logout")}
-                            className={`p-2 rounded-xl transition-colors ${isDark ? "text-white/50 hover:text-red-400 hover:bg-red-500/10" : "text-slate-400 hover:text-red-500 hover:bg-red-50"}`}>
+                        <button onClick={handleLogout} title="Keluar"
+                            className={`p-2 rounded-xl transition-colors ${isDark ? "text-white/50 hover:text-red-400 hover:bg-red-500/10" : "text-[#8A95A5] hover:text-red-500 hover:bg-red-50"}`}>
                             <LogOut className="w-5 h-5" />
                         </button>
                     </div>
@@ -108,9 +112,9 @@ export function AdminHeader() { return <AdminHeaderContent />; }
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     const { isDark } = useAdminTheme();
     return (
-        <main className={`min-h-screen relative overflow-hidden ${isDark ? "bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950" : "bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30"}`}>
-            <div className={`fixed top-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none ${isDark ? "bg-purple-500/20" : "bg-purple-400/15"}`} />
-            <div className={`fixed bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none ${isDark ? "bg-blue-500/20" : "bg-blue-400/10"}`} />
+        <main className={`min-h-screen relative overflow-hidden ${isDark ? "bg-gradient-to-br from-[#0F1419] via-[#1A2744] to-[#1F2D47]" : "bg-gradient-to-br from-[#F7F8FA] via-white to-[#F0F4FF]"}`}>
+            <div className={`fixed top-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none ${isDark ? "bg-[#344D7A]/30" : "bg-[#344D7A]/10"}`} />
+            <div className={`fixed bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none ${isDark ? "bg-[#F5B800]/10" : "bg-[#F5B800]/5"}`} />
             <AdminHeader />
             <div className="relative z-10">{children}</div>
         </main>
