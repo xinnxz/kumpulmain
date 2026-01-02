@@ -46,12 +46,11 @@ export function generateSlug(name: string, city?: string): string {
 }
 
 /**
- * Get venue URL using slug
+ * Get venue URL using slug only for clean, SEO-friendly URLs
+ * Format: /venues/{slug}
+ * Backend supports lookup by slug directly
  */
 export function getVenueUrl(venue: { name: string; city?: string | null; slug?: string }): string {
-    if (venue.slug) {
-        return `/venues/${venue.slug}`;
-    }
-    return `/venues/${generateSlug(venue.name, venue.city || undefined)}`;
+    return `/venues/${venue.slug || generateSlug(venue.name, venue.city || undefined)}`;
 }
 

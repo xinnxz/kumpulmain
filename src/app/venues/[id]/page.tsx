@@ -70,7 +70,7 @@ const mockReviews = [
 
 export default function VenueDetailPage() {
     const params = useParams();
-    // Use slug directly - backend will handle lookup by slug or UUID
+    // Use slug directly - backend supports lookup by slug
     const venueSlug = params.id as string;
 
     const [venue, setVenue] = useState<Venue | null>(null);
@@ -84,13 +84,16 @@ export default function VenueDetailPage() {
     const [showLightbox, setShowLightbox] = useState(false);
     const [showAllReviews, setShowAllReviews] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
 
     useEffect(() => {
+        if (!venueSlug || fetchError) return;
         fetchVenue();
     }, [venueSlug]);
 
     const fetchVenue = async () => {
         try {
+            setLoading(true);
             const res = await venuesApi.getById(venueSlug);
             setVenue(res.data);
 
@@ -105,6 +108,7 @@ export default function VenueDetailPage() {
             setSelectedDate(today);
         } catch (error) {
             console.error("Error fetching venue:", error);
+            setFetchError(true);
         } finally {
             setLoading(false);
         }
