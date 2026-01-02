@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     Settings, User, Bell, Shield, CreditCard, LogOut, Moon, Sun,
-    ChevronRight, ArrowLeft, Toggle, Check
+    ChevronRight, ArrowLeft, Check
 } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
