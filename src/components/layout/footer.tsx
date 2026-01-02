@@ -12,7 +12,7 @@ export function Footer() {
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div>
                             <h3 className="text-2xl font-bold mb-2">Siap untuk main?</h3>
-                            <p className="text-white/70">Daftar sekarang dan dapatkan promo booking pertama!</p>
+                            <p className="text-white/70">Gas sekarang juga broo!</p>
                         </div>
                         <Link href="/register">
                             <Button variant="accent" size="lg">
@@ -108,7 +108,7 @@ export function Footer() {
                 {/* Bottom */}
                 <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
                     <p className="text-white/40 text-sm">
-                        © 2024 KumpulMain.id. All rights reserved.
+                        © 2026 KumpulMain.id. All rights reserved.
                     </p>
                     <div className="flex space-x-6">
                         <Link href="/privacy" className="text-white/40 hover:text-white/70 text-sm transition-colors">Kebijakan Privasi</Link>

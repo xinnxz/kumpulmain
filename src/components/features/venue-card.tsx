@@ -58,7 +58,8 @@ const venueTypeImages: Record<string, string[]> = {
 };
 
 // Get image based on venue type and ID (for variety)
-function getVenueImage(venueId: string, venueType: string): string {
+// Exported so detail page can use same logic
+export function getVenueImage(venueId: string, venueType: string): string {
     const type = venueType?.toLowerCase() || "futsal";
     const images = venueTypeImages[type] || venueTypeImages.futsal;
     // Use venue ID hash to pick a consistent image
@@ -80,78 +81,82 @@ export function VenueCard({ venue }: VenueCardProps) {
     const imageUrl = venue.images?.[0] || getVenueImage(venue.id, venue.venueType || "futsal");
     const badgeStyle = sportBadgeStyles[sportType] || sportBadgeStyles.default;
 
+    // Generate slug from venue name
+    const slug = venue.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
     return (
-        <Link href={`/venues/${venue.id}`}>
-            <Card hover variant="elevated" className="overflow-hidden h-full group">
-                {/* Image */}
-                <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
-                        src={imageUrl}
-                        alt={venue.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <Card hover variant="elevated" className="overflow-hidden h-full group">
+            {/* Image - Clickable */}
+            <Link href={`/venues/${slug}-${venue.id}`} className="block relative aspect-[16/10] overflow-hidden cursor-pointer">
+                <img
+                    src={imageUrl}
+                    alt={venue.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    draggable={false}
+                />
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* Sport Badge */}
-                    {venue.venueType && (
-                        <div className="absolute top-4 left-4">
-                            <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase shadow-lg ${badgeStyle}`}>
-                                {capitalizeType(venue.venueType)}
-                            </span>
-                        </div>
-                    )}
-
-                    {/* Quick View Button */}
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                            <ArrowUpRight className="h-5 w-5 text-[#344D7A]" />
+                {/* Sport Badge */}
+                {venue.venueType && (
+                    <div className="absolute top-4 left-4">
+                        <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase shadow-lg ${badgeStyle}`}>
+                            {capitalizeType(venue.venueType)}
                         </span>
+                    </div>
+                )}
+
+                {/* Quick View Button */}
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                        <ArrowUpRight className="h-5 w-5 text-[#344D7A]" />
+                    </span>
+                </div>
+            </Link>
+
+            {/* Content */}
+            <div className="p-5">
+                {/* Location */}
+                <div className="flex items-center text-[#5A6A7E] text-sm mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-[#F5B800]" />
+                    <span className="truncate">{venue.city || "Jakarta"}</span>
+                </div>
+
+                {/* Title */}
+                <h3 className="font-bold text-[#1A2744] text-lg line-clamp-2 leading-tight mb-3 group-hover:text-[#344D7A] transition-colors">
+                    {venue.name}
+                </h3>
+
+                {/* Meta Info */}
+                <div className="flex items-center justify-between text-sm mb-4">
+                    <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 text-[#F5B800] fill-[#F5B800]" />
+                        <span className="font-semibold text-[#1A2744]">4.8</span>
+                        <span className="text-[#8A95A5]">(128)</span>
+                    </div>
+                    <div className="flex items-center text-[#5A6A7E]">
+                        <Users className="h-4 w-4 mr-1" />
+                        <span>Max {venue.capacity}</span>
                     </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-5">
-                    {/* Location */}
-                    <div className="flex items-center text-[#5A6A7E] text-sm mb-2">
-                        <MapPin className="h-4 w-4 mr-1.5 text-[#F5B800]" />
-                        <span className="truncate">{venue.city || "Jakarta"}</span>
+                {/* Price */}
+                <div className="pt-4 border-t border-[#E4E8ED] flex items-center justify-between">
+                    <div>
+                        <p className="text-[#8A95A5] text-xs mb-0.5">Mulai dari</p>
+                        <p className="text-xl font-bold text-[#344D7A]">
+                            {formatCurrency(venue.pricePerHour)}
+                            <span className="text-[#8A95A5] text-sm font-normal">/jam</span>
+                        </p>
                     </div>
-
-                    {/* Title */}
-                    <h3 className="font-bold text-[#1A2744] text-lg line-clamp-2 leading-tight mb-3 group-hover:text-[#344D7A] transition-colors">
-                        {venue.name}
-                    </h3>
-
-                    {/* Meta Info */}
-                    <div className="flex items-center justify-between text-sm mb-4">
-                        <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 text-[#F5B800] fill-[#F5B800]" />
-                            <span className="font-semibold text-[#1A2744]">4.8</span>
-                            <span className="text-[#8A95A5]">(128)</span>
-                        </div>
-                        <div className="flex items-center text-[#5A6A7E]">
-                            <Users className="h-4 w-4 mr-1" />
-                            <span>Max {venue.capacity}</span>
-                        </div>
-                    </div>
-
-                    {/* Price */}
-                    <div className="pt-4 border-t border-[#E4E8ED] flex items-center justify-between">
-                        <div>
-                            <p className="text-[#8A95A5] text-xs mb-0.5">Mulai dari</p>
-                            <p className="text-xl font-bold text-[#344D7A]">
-                                {formatCurrency(venue.pricePerHour)}
-                                <span className="text-[#8A95A5] text-sm font-normal">/jam</span>
-                            </p>
-                        </div>
+                    <Link href={`/venues/${slug}-${venue.id}`}>
                         <Button variant="accent" size="sm">
                             Booking
                         </Button>
-                    </div>
+                    </Link>
                 </div>
-            </Card>
-        </Link>
+            </div>
+        </Card>
     );
 }
 
