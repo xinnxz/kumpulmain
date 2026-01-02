@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Shield, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -37,22 +38,29 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-slate-100 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <main className="min-h-screen bg-gradient-to-br from-[#F7F8FA] via-white to-[#F0F4FF] flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Background orbs */}
+            <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-[#344D7A]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-[#F5B800]/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
             <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-full max-w-md"
+                className="w-full max-w-md relative z-10"
             >
-                <Card className="p-8 bg-white border-slate-200 shadow-xl shadow-indigo-500/10">
+                <Card className="p-8 bg-white/80 backdrop-blur-xl border-[#E4E8ED] shadow-xl shadow-[#344D7A]/10">
                     {/* Logo */}
                     <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/30">
-                            <Shield className="w-8 h-8 text-white" />
+                        <div className="w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                            <Image src="/logo.png" alt="KumpulMain" width={96} height={96} className="object-contain" />
                         </div>
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        <h1 className="text-2xl font-bold text-[#1A2744]">
                             Admin Panel
                         </h1>
-                        <p className="text-slate-500 text-sm mt-1">KumpulMain.id</p>
+                        <p className="text-[#5A6A7E] text-sm mt-1">
+                            <span className="text-[#344D7A] font-semibold">Kumpul</span>
+                            <span className="text-[#F5B800] font-semibold">Main</span>.id
+                        </p>
                     </div>
 
                     {error && (
@@ -63,32 +71,32 @@ export default function AdminLoginPage() {
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                            <label className="block text-sm font-medium text-[#344D7A] mb-2">Email</label>
                             <input
                                 type="email"
                                 value={form.email}
                                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-[#F7F8FA] border border-[#E4E8ED] text-[#1A2744] placeholder:text-[#8A95A5] focus:border-[#344D7A] focus:ring-2 focus:ring-[#344D7A]/20 outline-none transition-all"
                                 placeholder="admin@kumpulmain.id"
                                 required
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                            <label className="block text-sm font-medium text-[#344D7A] mb-2">Password</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={form.password}
                                     onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all pr-12"
+                                    className="w-full px-4 py-3 rounded-xl bg-[#F7F8FA] border border-[#E4E8ED] text-[#1A2744] placeholder:text-[#8A95A5] focus:border-[#344D7A] focus:ring-2 focus:ring-[#344D7A]/20 outline-none transition-all pr-12"
                                     placeholder="••••••••"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8A95A5] hover:text-[#344D7A]"
                                 >
                                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 </button>
@@ -98,7 +106,7 @@ export default function AdminLoginPage() {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/30"
+                            className="w-full py-3 bg-gradient-to-r from-[#344D7A] to-[#1A2744] hover:from-[#1A2744] hover:to-[#344D7A] text-white font-semibold rounded-xl shadow-lg shadow-[#344D7A]/30"
                         >
                             {loading ? (
                                 <>
@@ -115,7 +123,7 @@ export default function AdminLoginPage() {
                     </form>
 
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-[#8A95A5]">
                             Demo: admin@kumpulmain.id / admin123
                         </p>
                     </div>
