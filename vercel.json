@@ -1,0 +1,6 @@
+{
+    "buildCommand": "cd booking-web && npm install && npm run build",
+    "outputDirectory": "booking-web/.next",
+    "installCommand": "npm install",
+    "framework": "nextjs"
+}

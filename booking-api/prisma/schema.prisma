@@ -1,0 +1,318 @@
+// KumpulMain.id - Database Schema
+// Prisma schema for booking platform with joinan feature
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================
+// ENUM DEFINITIONS
+// =====================
+
+enum Role {
+  USER        // Customer yang booking
+  PENGELOLA   // Venue manager/owner
+  ADMIN       // System administrator
+}
+
+enum BookingStatus {
+  PENDING     // Menunggu pembayaran owner
+  OPEN        // Terbuka untuk joinan
+  CONFIRMED   // Semua slot terisi & sudah bayar
+  CANCELLED   // Dibatalkan
+  COMPLETED   // Selesai main
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum InviteType {
+  PUBLIC      // Bisa dicari siapa saja
+  PRIVATE     // Hanya bisa join via invite link
+}
+
+enum NotificationType {
+  BOOKING_NEW       // Pengelola: ada booking baru
+  BOOKING_CONFIRMED // User: booking confirmed
+  BOOKING_CANCELLED // Booking dibatalkan
+  JOINAN_REQUEST    // Owner: ada yang mau join
+  JOINAN_JOINED     // Owner: ada yang bergabung
+  PAYMENT_SUCCESS   // Payment berhasil
+  CHAT_MESSAGE      // Ada pesan baru
+}
+
+// =====================
+// USER MODEL
+// =====================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  phone         String?
+  avatar        String?
+  role          Role      @default(USER)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  managedVenues Venue[]              @relation("VenueManager")
+  bookings      Booking[]            @relation("BookingOwner")
+  participants  BookingParticipant[]
+  messages      Message[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// =====================
+// VENUE MODEL
+// =====================
+
+model Venue {
+  id            String    @id @default(uuid())
+  slug          String    @unique  // SEO-friendly URL slug (e.g., "soccer-field-depok")
+  managerId     String
+  name          String
+  description   String?   @db.Text
+  address       String
+  city          String?
+  pricePerHour  Int       // Harga per jam dalam Rupiah
+  capacity      Int       // Kapasitas maksimal orang
+  images        String[]  // Array of image URLs
+  facilities    String[]  // Fasilitas (WiFi, Parkir, dll)
+  venueType     String?   // futsal, badminton, basket, dll
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  manager       User            @relation("VenueManager", fields: [managerId], references: [id])
+  schedules     VenueSchedule[]
+  blockedDates  VenueBlockedDate[]
+  bookings      Booking[]
+
+  @@index([managerId])
+  @@index([city])
+  @@index([venueType])
+  @@index([slug])
+  @@map("venues")
+}
+
+// =====================
+// VENUE SCHEDULE - Jam buka per hari
+// =====================
+
+model VenueSchedule {
+  id            String    @id @default(uuid())
+  venueId       String
+  dayOfWeek     Int       // 0=Minggu, 1=Senin, ..., 6=Sabtu
+  openTime      String    // Format "HH:mm"
+  closeTime     String    // Format "HH:mm"
+  isAvailable   Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  venue         Venue     @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@unique([venueId, dayOfWeek])
+  @@map("venue_schedules")
+}
+
+// =====================
+// VENUE BLOCKED DATE - Tanggal tutup khusus
+// =====================
+
+model VenueBlockedDate {
+  id            String    @id @default(uuid())
+  venueId       String
+  date          DateTime  @db.Date
+  reason        String?
+  createdAt     DateTime  @default(now())
+
+  venue         Venue     @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@unique([venueId, date])
+  @@map("venue_blocked_dates")
+}
+
+// =====================
+// BOOKING MODEL
+// =====================
+
+model Booking {
+  id            String        @id @default(uuid())
+  venueId       String
+  ownerId       String
+  
+  // Waktu booking
+  date          DateTime      @db.Date
+  startTime     String        // Format "HH:mm"
+  endTime       String        // Format "HH:mm"
+  
+  // Pricing
+  totalPrice    Int           // Total harga booking
+  pricePerSlot  Int           // Harga per slot (totalPrice / maxSlots)
+  
+  // Joinan settings
+  maxSlots      Int           @default(1)    // Max peserta (termasuk owner)
+  isJoinable    Boolean       @default(false) // Bisa di-join?
+  
+  // Invitation
+  inviteType    InviteType    @default(PUBLIC)
+  inviteCode    String        @unique // Unique code untuk private invite
+  
+  joinDeadline  DateTime?     // Deadline untuk join
+  title         String?       // Judul undangan, misal "Main Futsal Bareng"
+  notes         String?       @db.Text
+  
+  status        BookingStatus @default(PENDING)
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  venue         Venue         @relation(fields: [venueId], references: [id])
+  owner         User          @relation("BookingOwner", fields: [ownerId], references: [id])
+  participants  BookingParticipant[]
+  chatRoom      ChatRoom?
+
+  @@index([venueId])
+  @@index([ownerId])
+  @@index([date])
+  @@index([status])
+  @@index([inviteType, status])
+  @@map("bookings")
+}
+
+// =====================
+// BOOKING PARTICIPANT MODEL
+// =====================
+
+model BookingParticipant {
+  id            String        @id @default(uuid())
+  bookingId     String
+  userId        String
+  
+  shareAmount   Int           // Jumlah yang harus dibayar
+  paymentStatus PaymentStatus @default(UNPAID)
+  isOwner       Boolean       @default(false)
+  
+  joinedAt      DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  booking       Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id])
+  payment       Payment?
+
+  @@unique([bookingId, userId])
+  @@index([bookingId])
+  @@index([userId])
+  @@map("booking_participants")
+}
+
+// =====================
+// PAYMENT MODEL
+// =====================
+
+model Payment {
+  id              String    @id @default(uuid())
+  participantId   String    @unique
+  
+  // Midtrans data
+  midtransOrderId String    @unique
+  snapToken       String?
+  amount          Int
+  paymentType     String?
+  transactionId   String?
+  
+  status          String    @default("pending")
+  paidAt          DateTime?
+  expiredAt       DateTime?
+  
+  rawResponse     Json?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  participant     BookingParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([midtransOrderId])
+  @@index([status])
+  @@map("payments")
+}
+
+// =====================
+// NOTIFICATION MODEL
+// =====================
+
+model Notification {
+  id            String           @id @default(uuid())
+  userId        String
+  type          NotificationType
+  title         String
+  message       String
+  data          Json?            // Additional data (bookingId, etc)
+  isRead        Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+
+  // Relations
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+// =====================
+// CHAT ROOM MODEL
+// =====================
+
+model ChatRoom {
+  id            String    @id @default(uuid())
+  bookingId     String    @unique
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  messages      Message[]
+
+  @@map("chat_rooms")
+}
+
+// =====================
+// MESSAGE MODEL
+// =====================
+
+model Message {
+  id            String    @id @default(uuid())
+  chatRoomId    String
+  senderId      String
+  
+  content       String    @db.Text
+  isRead        Boolean   @default(false)
+  
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  chatRoom      ChatRoom  @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  sender        User      @relation(fields: [senderId], references: [id])
+
+  @@index([chatRoomId])
+  @@index([senderId])
+  @@map("messages")
+}

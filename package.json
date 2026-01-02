@@ -1,0 +1,20 @@
+{
+    "name": "kumpulmain-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "description": "KumpulMain.id - Booking Lapangan & Main Bareng",
+    "workspaces": [
+        "booking-web",
+        "booking-api"
+    ],
+    "scripts": {
+        "dev:web": "npm run dev --workspace=booking-web",
+        "dev:api": "npm run start:dev --workspace=booking-api",
+        "build:web": "npm run build --workspace=booking-web",
+        "build:api": "npm run build --workspace=booking-api",
+        "start:web": "npm run start --workspace=booking-web",
+        "start:api": "npm run start:prod --workspace=booking-api"
+    },
+    "author": "xinnxz",
+    "license": "MIT"
+}
