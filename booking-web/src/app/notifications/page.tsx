@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import {
     Bell, Calendar, CreditCard, Users, MessageCircle, CheckCircle,
@@ -44,8 +45,10 @@ export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("all");
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         fetchNotifications();
     }, []);
 
@@ -107,16 +110,22 @@ export default function NotificationsPage() {
         }
     };
 
-    const filteredNotifications = notifications.filter(n => {
+    // Ensure notifications is always an array
+    const notificationsList = Array.isArray(notifications) ? notifications : [];
+
+    const filteredNotifications = notificationsList.filter(n => {
         if (activeTab === "unread") return !n.isRead;
         if (activeTab === "booking") return n.type.includes("BOOKING") || n.type.includes("JOINAN");
         if (activeTab === "payment") return n.type.includes("PAYMENT");
         return true;
     });
 
-    const unreadCount = notifications.filter(n => !n.isRead).length;
+    const unreadCount = notificationsList.filter(n => !n.isRead).length;
 
     const formatTime = (dateStr: string) => {
+        // Return placeholder during SSR to avoid hydration mismatch
+        if (!mounted) return "";
+
         const date = new Date(dateStr);
         const now = new Date();
         const diff = now.getTime() - date.getTime();
@@ -126,6 +135,11 @@ export default function NotificationsPage() {
         if (diff < 86400000) return `${Math.floor(diff / 3600000)} jam lalu`;
         return `${Math.floor(diff / 86400000)} hari lalu`;
     };
+
+    // Prevent SSR hydration mismatch - return null until client
+    if (!mounted) {
+        return null;
+    }
 
     if (loading) {
         return (
@@ -185,8 +199,8 @@ export default function NotificationsPage() {
                                 key={tab.key}
                                 onClick={() => setActiveTab(tab.key)}
                                 className={`px-5 py-2.5 rounded-full font-medium transition-all whitespace-nowrap ${activeTab === tab.key
-                                        ? "bg-[#1A2744] text-white"
-                                        : "bg-white text-[#8A95A5] hover:bg-gray-100"
+                                    ? "bg-[#1A2744] text-white"
+                                    : "bg-white text-[#8A95A5] hover:bg-gray-100"
                                     }`}
                             >
                                 {tab.label}

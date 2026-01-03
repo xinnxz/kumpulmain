@@ -5,9 +5,10 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Bell, LogOut, Settings, Calendar, MapPin } from "lucide-react";
+import { Menu, X, User, ChevronDown, LogOut, Settings, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
+import { NotificationDropdown } from "@/components/features/notification-dropdown";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -85,10 +86,8 @@ export function Navbar() {
                     <div className="hidden lg:flex items-center space-x-3">
                         {isAuthenticated ? (
                             <>
-                                <Link href="/notifications" className="relative p-2.5 rounded-xl text-[#5A6A7E] hover:text-[#344D7A] hover:bg-[#F7F8FA] transition-all">
-                                    <Bell className="h-5 w-5" />
-                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#F5B800] rounded-full ring-2 ring-white" />
-                                </Link>
+                                {/* Notification Dropdown */}
+                                <NotificationDropdown />
 
                                 <div className="relative">
                                     <button onClick={() => setUserMenuOpen(!userMenuOpen)}

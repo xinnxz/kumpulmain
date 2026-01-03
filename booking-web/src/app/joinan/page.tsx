@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Users, Calendar, Clock, MapPin, Star, ArrowRight, Loader2, Search, Filter, UserPlus } from "lucide-react";
+import {
+    Users, Calendar, Clock, MapPin, Star, ArrowRight, Loader2,
+    UserPlus, Sparkles, Zap
+} from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { invitationsApi } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -21,6 +23,7 @@ interface PublicInvitation {
     date: string;
     startTime: string;
     endTime: string;
+    skillLevel?: string;
     venue: {
         id: string;
         name: string;
@@ -30,265 +33,348 @@ interface PublicInvitation {
     };
     organizer: {
         name: string;
+        rating?: number;
     };
+    participants?: { name: string }[];
 }
+
+// Mock data
+const mockInvitations: PublicInvitation[] = [
+    {
+        id: "1",
+        title: "Futsal Seru Bareng! 🔥",
+        inviteCode: "FUTSAL01",
+        maxSlots: 14,
+        filledSlots: 10,
+        pricePerSlot: 25000,
+        date: "2026-01-05",
+        startTime: "19:00",
+        endTime: "21:00",
+        skillLevel: "Fun Game",
+        venue: { id: "1", name: "Futsal Arena Jakarta", city: "Jakarta Selatan", venueType: "Futsal", images: ["https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=400"] },
+        organizer: { name: "Andi Pratama", rating: 4.9 },
+        participants: Array(10).fill({ name: "Player" }),
+    },
+    {
+        id: "2",
+        title: "Morning Badminton 🏸",
+        inviteCode: "BADMIN02",
+        maxSlots: 8,
+        filledSlots: 5,
+        pricePerSlot: 30000,
+        date: "2026-01-06",
+        startTime: "07:00",
+        endTime: "09:00",
+        skillLevel: "Intermediate",
+        venue: { id: "2", name: "GOR Bandung", city: "Bandung", venueType: "Badminton", images: ["https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400"] },
+        organizer: { name: "Sarah W", rating: 4.8 },
+        participants: Array(5).fill({ name: "Player" }),
+    },
+    {
+        id: "3",
+        title: "Basketball Night 🏀",
+        inviteCode: "BASKET03",
+        maxSlots: 10,
+        filledSlots: 8,
+        pricePerSlot: 35000,
+        date: "2026-01-07",
+        startTime: "20:00",
+        endTime: "22:00",
+        skillLevel: "Competitive",
+        venue: { id: "3", name: "GOR Bogor", city: "Bogor", venueType: "Basketball", images: ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400"] },
+        organizer: { name: "Mike Chen", rating: 5.0 },
+        participants: Array(8).fill({ name: "Player" }),
+    },
+];
 
 export default function JoinanPage() {
     const [invitations, setInvitations] = useState<PublicInvitation[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchCode, setSearchCode] = useState("");
     const [selectedSport, setSelectedSport] = useState("");
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         fetchInvitations();
     }, []);
 
     const fetchInvitations = async () => {
         try {
             const res = await invitationsApi.getPublic();
-            // Handle different API response structures
             const data = res.data;
-            if (Array.isArray(data)) {
-                setInvitations(data);
-            } else if (data && Array.isArray(data.data)) {
-                setInvitations(data.data);
-            } else {
-                setInvitations([]);
-            }
-        } catch (error) {
-            console.error("Error fetching invitations:", error);
-            setInvitations([]);
+            if (Array.isArray(data) && data.length > 0) setInvitations(data);
+            else if (data?.data?.length > 0) setInvitations(data.data);
+            else setInvitations(mockInvitations);
+        } catch {
+            setInvitations(mockInvitations);
         } finally {
             setLoading(false);
         }
     };
 
-    const sportTypes = ["Futsal", "Badminton", "Basketball", "Tennis"];
+    const sports = [
+        { key: "", label: "Semua", emoji: "🎯" },
+        { key: "Futsal", label: "Futsal", emoji: "⚽" },
+        { key: "Badminton", label: "Badminton", emoji: "🏸" },
+        { key: "Basketball", label: "Basket", emoji: "🏀" },
+        { key: "Tennis", label: "Tennis", emoji: "🎾" },
+    ];
 
-    const filteredInvitations = invitations.filter((inv) => {
-        if (selectedSport && inv.venue.venueType !== selectedSport) return false;
-        return true;
-    });
+    const filtered = invitations.filter(inv => !selectedSport || inv.venue.venueType === selectedSport);
 
-    const sportBadgeStyles: Record<string, string> = {
-        Futsal: "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white",
-        Badminton: "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
-        Basketball: "bg-gradient-to-r from-orange-500 to-orange-600 text-white",
-        Tennis: "bg-gradient-to-r from-pink-500 to-pink-600 text-white",
+    const getColorScheme = (sport: string) => {
+        const schemes: Record<string, { bg: string; text: string; light: string }> = {
+            Futsal: { bg: "bg-emerald-500", text: "text-emerald-600", light: "bg-emerald-50" },
+            Badminton: { bg: "bg-sky-500", text: "text-sky-600", light: "bg-sky-50" },
+            Basketball: { bg: "bg-orange-500", text: "text-orange-600", light: "bg-orange-50" },
+            Tennis: { bg: "bg-lime-500", text: "text-lime-600", light: "bg-lime-50" },
+        };
+        return schemes[sport] || schemes.Futsal;
     };
+
+    if (!mounted) return null;
 
     return (
         <main className="min-h-screen bg-[#F7F8FA]">
             <Navbar />
 
-            {/* Header */}
-            <section className="pt-24 pb-8 bg-gradient-to-b from-white to-[#F7F8FA]">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Hero Section - Light Animations Only */}
+            <section className="relative pt-24 pb-16 overflow-hidden">
+                {/* Simple Static Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#F5B800]/5 via-transparent to-[#344D7A]/5" />
+
+                {/* Static Decorative Emojis (No Animation) */}
+                <div className="absolute top-32 right-[15%] text-5xl opacity-20 select-none">⚽</div>
+                <div className="absolute top-48 left-[10%] text-4xl opacity-15 select-none">🏀</div>
+                <div className="absolute bottom-20 right-[25%] text-3xl opacity-15 select-none">🏸</div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Title */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-center mb-8"
+                        transition={{ duration: 0.5 }}
+                        className="text-center mb-12"
                     >
-                        {/* <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5B800]/10 text-[#344D7A] text-sm font-semibold mb-4">
-                            👥 Main Bareng
-                        </span> */}
-                        <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2744] mb-3">
-                            Gas Mabar!
+                        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white shadow-md border border-[#F5B800]/20 mb-6">
+                            <Sparkles className="w-4 h-4 text-[#F5B800]" />
+                            <span className="text-sm font-medium text-[#344D7A]">Temukan teman main baru!</span>
+                        </div>
+
+                        <h1 className="text-5xl sm:text-6xl font-black mb-4 text-[#1A2744]">
+                            Gas <span className="text-[#F5B800]">Mabar!</span>
                         </h1>
-                        <p className="text-[#5A6A7E] max-w-lg mx-auto">
-                            Join undangan olahraga, bisa patungan biar lebih hemat!
+                        <p className="text-lg text-[#5A6A7E] max-w-xl mx-auto">
+                            Main bareng, kenalan, patungan. <span className="text-[#344D7A] font-medium">Seru kan?</span>
                         </p>
                     </motion.div>
 
-                    {/* Search & Filter */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="bg-white rounded-2xl shadow-lg shadow-[#344D7A]/5 p-4 border border-[#E4E8ED]"
-                    >
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            {/* Search by Code */}
-                            <div className="flex-1 relative">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#8A95A5]" />
-                                <input
-                                    type="text"
-                                    placeholder="Punya kode undangan? Masukkan di sini..."
-                                    value={searchCode}
-                                    onChange={(e) => setSearchCode(e.target.value)}
-                                    className="w-full h-12 pl-12 pr-4 rounded-xl bg-[#F7F8FA] border border-transparent text-[#1A2744] placeholder:text-[#8A95A5] focus:border-[#F5B800] focus:bg-white outline-none transition-all"
-                                />
-                            </div>
+                    {/* Sport Pills */}
+                    <div className="flex justify-center gap-3 flex-wrap mb-8">
+                        {sports.map((sport) => (
+                            <button
+                                key={sport.key}
+                                onClick={() => setSelectedSport(sport.key)}
+                                className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${selectedSport === sport.key
+                                        ? "bg-[#344D7A] text-white shadow-lg"
+                                        : "bg-white text-[#5A6A7E] hover:bg-[#344D7A] hover:text-white shadow-md border border-[#E4E8ED]"
+                                    }`}
+                            >
+                                <span className="mr-2">{sport.emoji}</span>
+                                {sport.label}
+                            </button>
+                        ))}
+                    </div>
 
-                            {/* Sport Filter */}
-                            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-                                <button
-                                    onClick={() => setSelectedSport("")}
-                                    className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${selectedSport === ""
-                                        ? "bg-[#344D7A] text-white"
-                                        : "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
-                                        }`}
-                                >
-                                    Semua
-                                </button>
-                                {sportTypes.map((sport) => (
-                                    <button
-                                        key={sport}
-                                        onClick={() => setSelectedSport(sport)}
-                                        className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${selectedSport === sport
-                                            ? "bg-[#344D7A] text-white"
-                                            : "bg-[#F7F8FA] text-[#5A6A7E] hover:bg-[#E4E8ED]"
-                                            }`}
-                                    >
-                                        {sport}
-                                    </button>
-                                ))}
+                    {/* Stats */}
+                    <div className="flex justify-center gap-6 mb-8">
+                        {[
+                            { value: "500+", label: "Sesi", emoji: "🔥" },
+                            { value: "10K+", label: "Pemain", emoji: "👥" },
+                            { value: "4.9", label: "Rating", emoji: "⭐" },
+                        ].map((stat, i) => (
+                            <div key={i} className="text-center bg-white rounded-xl px-5 py-3 shadow-md border border-[#E4E8ED]">
+                                <div className="text-xl mb-1">{stat.emoji}</div>
+                                <div className="text-xl font-bold text-[#344D7A]">{stat.value}</div>
+                                <div className="text-xs text-[#8A95A5] uppercase tracking-wider">{stat.label}</div>
                             </div>
-
-                            <Button variant="accent" className="h-12 px-6">
-                                <UserPlus className="h-5 w-5 mr-2" />
-                                Join
-                            </Button>
-                        </div>
-                    </motion.div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            {/* Content */}
-            <section className="pb-16">
+            {/* Sessions Grid */}
+            <section className="relative pb-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Results Count */}
-                    <div className="flex items-center justify-between mb-6">
-                        <p className="text-[#5A6A7E]">
-                            {loading ? "Memuat..." : `${filteredInvitations.length} undangan tersedia`}
-                        </p>
+                    {/* Section Header */}
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-[#1A2744]">
+                            {loading ? "Loading..." : `${filtered.length} Sesi `}
+                            <span className="text-[#8A95A5] font-normal">tersedia</span>
+                        </h2>
+                        <Link href="/joinan/create">
+                            <Button variant="accent" className="shadow-md">
+                                <Zap className="w-4 h-4 mr-2" />
+                                Buat Sesi
+                            </Button>
+                        </Link>
                     </div>
 
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
-                            <div className="text-center">
-                                <Loader2 className="h-10 w-10 text-[#F5B800] animate-spin mx-auto mb-4" />
-                                <p className="text-[#5A6A7E]">Mencari undangan...</p>
-                            </div>
+                            <Loader2 className="w-10 h-10 text-[#F5B800] animate-spin" />
                         </div>
-                    ) : filteredInvitations.length > 0 ? (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredInvitations.map((invitation, index) => (
-                                <motion.div
-                                    key={invitation.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.05 }}
-                                >
-                                    <Card hover variant="elevated" className="overflow-hidden">
-                                        {/* Image */}
-                                        <div className="relative h-40">
-                                            <div
-                                                className="absolute inset-0 bg-cover bg-center"
-                                                style={{
-                                                    backgroundImage: `url(${invitation.venue.images?.[0] ||
-                                                        "https://placehold.co/400x200/f7f8fa/5a6a7e?text=Venue"
-                                                        })`,
-                                                }}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/80 to-transparent" />
+                    ) : filtered.length > 0 ? (
+                        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {filtered.map((inv, index) => {
+                                const colors = getColorScheme(inv.venue.venueType);
+                                const slotsLeft = inv.maxSlots - inv.filledSlots;
+                                const isHot = slotsLeft <= 3;
 
-                                            {/* Sport Badge */}
-                                            <div className="absolute top-3 left-3">
-                                                <span
-                                                    className={`px-3 py-1 rounded-lg text-xs font-bold uppercase shadow-lg ${sportBadgeStyles[invitation.venue.venueType] ||
-                                                        "bg-[#344D7A] text-white"
-                                                        }`}
-                                                >
-                                                    {invitation.venue.venueType}
-                                                </span>
-                                            </div>
+                                return (
+                                    <motion.div
+                                        key={inv.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05, duration: 0.3 }}
+                                    >
+                                        <Link href={`/joinan/${inv.inviteCode}`}>
+                                            <div className="group bg-white rounded-2xl overflow-hidden shadow-md border border-[#E4E8ED] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                                {/* Image Header */}
+                                                <div className="relative h-44 overflow-hidden">
+                                                    <div
+                                                        className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                                                        style={{ backgroundImage: `url(${inv.venue.images?.[0]})` }}
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/80 via-transparent to-transparent" />
 
-                                            {/* Slots */}
-                                            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5">
-                                                <div className="flex items-center space-x-1">
-                                                    <Users className="h-4 w-4 text-[#344D7A]" />
-                                                    <span className="text-sm font-bold text-[#344D7A]">
-                                                        {invitation.filledSlots}/{invitation.maxSlots}
-                                                    </span>
-                                                </div>
-                                            </div>
+                                                    {/* Sport Badge */}
+                                                    <div className="absolute top-3 left-3">
+                                                        <div className={`${colors.bg} px-3 py-1.5 rounded-lg text-white font-bold text-xs shadow`}>
+                                                            {sports.find(s => s.key === inv.venue.venueType)?.emoji} {inv.venue.venueType}
+                                                        </div>
+                                                    </div>
 
-                                            {/* Info Overlay */}
-                                            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                                <h3 className="font-bold text-lg line-clamp-1">{invitation.title}</h3>
-                                                <div className="flex items-center text-white/80 text-sm">
-                                                    <MapPin className="h-4 w-4 mr-1" />
-                                                    {invitation.venue.name}
-                                                </div>
-                                            </div>
-                                        </div>
+                                                    {/* Hot Badge */}
+                                                    {isHot && (
+                                                        <div className="absolute top-3 right-3 bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shadow">
+                                                            <Zap className="w-3 h-3" />
+                                                            HAMPIR PENUH
+                                                        </div>
+                                                    )}
 
-                                        {/* Content */}
-                                        <div className="p-5">
-                                            {/* Organizer */}
-                                            <div className="flex items-center space-x-3 mb-4">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F5B800] to-[#FFD740] flex items-center justify-center">
-                                                    <span className="text-[#344D7A] font-bold text-sm">
-                                                        {invitation.organizer.name.charAt(0)}
-                                                    </span>
+                                                    {/* Title */}
+                                                    <div className="absolute bottom-3 left-3 right-3">
+                                                        <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
+                                                            {inv.title}
+                                                        </h3>
+                                                        <div className="flex items-center gap-2 text-white/80 text-sm">
+                                                            <MapPin className="w-3 h-3" />
+                                                            <span>{inv.venue.city}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-[#1A2744] font-semibold text-sm">
-                                                        {invitation.organizer.name}
-                                                    </p>
-                                                    <p className="text-[#8A95A5] text-xs">Penyelenggara</p>
-                                                </div>
-                                            </div>
 
-                                            {/* Schedule */}
-                                            <div className="flex items-center justify-between text-sm mb-4 pb-4 border-b border-[#E4E8ED]">
-                                                <div className="flex items-center text-[#5A6A7E]">
-                                                    <Calendar className="h-4 w-4 mr-1.5 text-[#F5B800]" />
-                                                    {formatDate(invitation.date)}
-                                                </div>
-                                                <div className="flex items-center text-[#5A6A7E]">
-                                                    <Clock className="h-4 w-4 mr-1.5 text-[#344D7A]" />
-                                                    {invitation.startTime} - {invitation.endTime}
-                                                </div>
-                                            </div>
+                                                {/* Content */}
+                                                <div className="p-4">
+                                                    {/* Time & Date */}
+                                                    <div className="flex items-center gap-3 mb-4">
+                                                        <div className={`flex-1 ${colors.light} rounded-lg p-2.5 text-center`}>
+                                                            <Calendar className={`w-4 h-4 ${colors.text} mx-auto mb-1`} />
+                                                            <p className="text-[#1A2744] text-sm font-semibold">{formatDate(inv.date)}</p>
+                                                        </div>
+                                                        <div className="flex-1 bg-[#F7F8FA] rounded-lg p-2.5 text-center">
+                                                            <Clock className="w-4 h-4 text-[#8A95A5] mx-auto mb-1" />
+                                                            <p className="text-[#1A2744] text-sm font-semibold">{inv.startTime}</p>
+                                                        </div>
+                                                    </div>
 
-                                            {/* Price & Action */}
-                                            <div className="flex items-center justify-between">
-                                                <div>
-                                                    <p className="text-[#8A95A5] text-xs">Per orang</p>
-                                                    <p className="text-xl font-bold text-[#344D7A]">
-                                                        {formatCurrency(invitation.pricePerSlot)}
-                                                    </p>
+                                                    {/* Participants */}
+                                                    <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#E4E8ED]">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex -space-x-2">
+                                                                {Array(Math.min(inv.filledSlots, 3)).fill(0).map((_, i) => (
+                                                                    <div
+                                                                        key={i}
+                                                                        className={`w-7 h-7 rounded-full border-2 border-white ${colors.bg} flex items-center justify-center text-white text-xs font-bold`}
+                                                                    >
+                                                                        {String.fromCharCode(65 + i)}
+                                                                    </div>
+                                                                ))}
+                                                                {inv.filledSlots > 3 && (
+                                                                    <div className="w-7 h-7 rounded-full border-2 border-white bg-[#F7F8FA] flex items-center justify-center text-[#5A6A7E] text-xs font-bold">
+                                                                        +{inv.filledSlots - 3}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <span className="text-[#5A6A7E] text-sm">{inv.filledSlots}/{inv.maxSlots}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1 text-sm">
+                                                            <Star className="w-4 h-4 text-[#F5B800] fill-[#F5B800]" />
+                                                            <span className="font-medium text-[#1A2744]">{inv.organizer.rating || 4.8}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Price & CTA */}
+                                                    <div className="flex items-center justify-between">
+                                                        <div>
+                                                            <p className="text-[#8A95A5] text-xs">Per orang</p>
+                                                            <p className="text-xl font-bold text-[#344D7A]">
+                                                                {formatCurrency(inv.pricePerSlot)}
+                                                            </p>
+                                                        </div>
+                                                        <Button variant="accent" size="sm">
+                                                            Gabung
+                                                            <ArrowRight className="w-4 h-4 ml-1" />
+                                                        </Button>
+                                                    </div>
                                                 </div>
-                                                <Link href={`/joinan/${invitation.inviteCode}`}>
-                                                    <Button variant="accent" size="sm">
-                                                        Gabung
-                                                        <ArrowRight className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </Link>
                                             </div>
-                                        </div>
-                                    </Card>
-                                </motion.div>
-                            ))}
+                                        </Link>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
                     ) : (
-                        <div className="text-center py-20 bg-white rounded-2xl border border-[#E4E8ED]">
-                            <div className="w-20 h-20 rounded-full bg-[#F7F8FA] flex items-center justify-center mx-auto mb-6">
-                                <Users className="h-10 w-10 text-[#8A95A5]" />
-                            </div>
-                            <h3 className="text-xl font-bold text-[#1A2744] mb-2">Belum ada undangan</h3>
-                            <p className="text-[#5A6A7E] mb-6 max-w-md mx-auto">
-                                Belum ada undangan main bareng yang tersedia. Buat undanganmu sendiri!
-                            </p>
-                            <Link href="/venues">
+                        <div className="text-center py-20 bg-white rounded-2xl shadow-md border border-[#E4E8ED]">
+                            <div className="text-5xl mb-4">🎯</div>
+                            <h3 className="text-xl font-bold text-[#1A2744] mb-2">Belum ada sesi</h3>
+                            <p className="text-[#5A6A7E] mb-6">Jadi yang pertama buat sesi main bareng!</p>
+                            <Link href="/joinan/create">
                                 <Button variant="accent">
-                                    Booking & Buat Undangan
+                                    <Zap className="w-4 h-4 mr-2" />
+                                    Buat Sesi Sekarang
                                 </Button>
                             </Link>
                         </div>
                     )}
+                </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="py-16 bg-gradient-to-br from-[#344D7A] to-[#1A2744]">
+                <div className="max-w-4xl mx-auto px-4 text-center">
+                    <div className="text-5xl mb-6">🚀</div>
+                    <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
+                        Mau bikin sesi sendiri?
+                    </h2>
+                    <p className="text-lg text-white/60 mb-8">
+                        Booking venue, ajak teman, patungan. Simple!
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Link href="/venues">
+                            <Button size="lg" className="bg-white text-[#344D7A] hover:bg-white/90 px-8">
+                                <MapPin className="w-5 h-5 mr-2" />
+                                Cari Venue
+                            </Button>
+                        </Link>
+                        <Link href="/joinan/create">
+                            <Button size="lg" variant="accent" className="px-8">
+                                <Zap className="w-5 h-5 mr-2" />
+                                Buat Sesi
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </section>
 

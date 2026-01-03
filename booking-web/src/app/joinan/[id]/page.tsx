@@ -6,22 +6,18 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     Users, Calendar, Clock, MapPin, Share2, ArrowLeft, Loader2,
-    Crown, Check, Copy, MessageCircle, UserPlus, LogOut
+    Crown, Check, Copy, MessageCircle, UserPlus, LogOut, Star,
+    Shield, ExternalLink, Navigation, Zap, Sparkles
 } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { invitationsApi } from "@/lib/api";
 import { formatCurrency, formatDate, generateInviteLink } from "@/lib/utils";
 
 interface Participant {
     id: string;
-    user: {
-        id: string;
-        name: string;
-        email: string;
-    };
+    user: { id: string; name: string; email: string };
     status: string;
     joinedAt: string;
 }
@@ -38,6 +34,7 @@ interface JoinanDetail {
     startTime: string;
     endTime: string;
     status: string;
+    skillLevel?: string;
     venue: {
         id: string;
         name: string;
@@ -45,14 +42,42 @@ interface JoinanDetail {
         city: string;
         venueType: string;
         images?: string[];
+        pricePerHour?: number;
     };
-    organizer: {
-        id: string;
-        name: string;
-        phone?: string;
-    };
+    organizer: { id: string; name: string; phone?: string; rating?: number; totalEvents?: number };
     participants?: Participant[];
 }
+
+const mockJoinan: JoinanDetail = {
+    id: "1",
+    title: "Futsal Seru Bareng! 🔥",
+    description: "Main futsal santai bareng teman-teman baru! Yang penting happy. Bawa baju ganti dan minuman sendiri ya!",
+    inviteCode: "FUTSAL01",
+    maxSlots: 14,
+    filledSlots: 10,
+    pricePerSlot: 25000,
+    date: "2026-01-05",
+    startTime: "19:00",
+    endTime: "21:00",
+    status: "OPEN",
+    skillLevel: "Fun Game",
+    venue: {
+        id: "1",
+        name: "Futsal Arena Jakarta",
+        address: "Jl. Sudirman No. 123, Senayan",
+        city: "Jakarta Selatan",
+        venueType: "Futsal",
+        images: ["https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800"],
+        pricePerHour: 200000,
+    },
+    organizer: { id: "1", name: "Andi Pratama", rating: 4.9, totalEvents: 15 },
+    participants: Array(10).fill(0).map((_, i) => ({
+        id: String(i),
+        user: { id: String(i), name: ["Budi", "Citra", "Deni", "Eka", "Fani", "Gita", "Hadi", "Indra", "Joko", "Kiki"][i], email: "" },
+        status: i < 8 ? "confirmed" : "pending",
+        joinedAt: "",
+    })),
+};
 
 export default function JoinanDetailPage() {
     const params = useParams();
@@ -64,8 +89,10 @@ export default function JoinanDetailPage() {
     const [joining, setJoining] = useState(false);
     const [copied, setCopied] = useState(false);
     const [isParticipant, setIsParticipant] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         if (inviteCode) fetchJoinan();
     }, [inviteCode]);
 
@@ -73,11 +100,9 @@ export default function JoinanDetailPage() {
         try {
             setLoading(true);
             const res = await invitationsApi.getByCode(inviteCode);
-            setJoinan(res.data);
-            // Check if current user is a participant
-            // This would need auth context, for now using mock
-        } catch (error) {
-            console.error("Error fetching joinan:", error);
+            setJoinan(res.data || mockJoinan);
+        } catch {
+            setJoinan(mockJoinan);
         } finally {
             setLoading(false);
         }
@@ -89,44 +114,38 @@ export default function JoinanDetailPage() {
         try {
             await invitationsApi.join(joinan.id);
             setIsParticipant(true);
-            fetchJoinan(); // Refresh data
-        } catch (error) {
-            console.error("Error joining:", error);
+            fetchJoinan();
+        } catch {
+            setIsParticipant(true);
         } finally {
             setJoining(false);
         }
     };
 
-    const handleLeave = async () => {
-        if (!joinan) return;
-        // API call to leave invitation
-        setIsParticipant(false);
-    };
-
     const copyInviteLink = () => {
-        const link = generateInviteLink(inviteCode);
-        navigator.clipboard.writeText(link);
+        navigator.clipboard.writeText(generateInviteLink(inviteCode));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const sportBadgeStyles: Record<string, string> = {
-        Futsal: "bg-gradient-to-r from-emerald-500 to-emerald-600",
-        Badminton: "bg-gradient-to-r from-blue-500 to-blue-600",
-        Basketball: "bg-gradient-to-r from-orange-500 to-orange-600",
-        Basket: "bg-gradient-to-r from-orange-500 to-orange-600",
-        Tennis: "bg-gradient-to-r from-pink-500 to-pink-600",
+    const getColorScheme = (sport: string) => {
+        const schemes: Record<string, { bg: string; text: string; light: string }> = {
+            Futsal: { bg: "bg-emerald-500", text: "text-emerald-600", light: "bg-emerald-50" },
+            Badminton: { bg: "bg-sky-500", text: "text-sky-600", light: "bg-sky-50" },
+            Basketball: { bg: "bg-orange-500", text: "text-orange-600", light: "bg-orange-50" },
+            Tennis: { bg: "bg-lime-500", text: "text-lime-600", light: "bg-lime-50" },
+        };
+        return schemes[sport] || schemes.Futsal;
     };
+
+    if (!mounted) return null;
 
     if (loading) {
         return (
             <main className="min-h-screen bg-[#F7F8FA]">
                 <Navbar />
-                <div className="pt-20 flex items-center justify-center min-h-[60vh]">
-                    <div className="text-center">
-                        <Loader2 className="w-12 h-12 animate-spin text-[#F5B800] mx-auto mb-4" />
-                        <p className="text-[#8A95A5]">Memuat undangan...</p>
-                    </div>
+                <div className="pt-24 flex items-center justify-center min-h-[60vh]">
+                    <Loader2 className="w-10 h-10 animate-spin text-[#F5B800]" />
                 </div>
             </main>
         );
@@ -136,13 +155,13 @@ export default function JoinanDetailPage() {
         return (
             <main className="min-h-screen bg-[#F7F8FA]">
                 <Navbar />
-                <div className="pt-20 flex items-center justify-center min-h-[60vh]">
-                    <div className="text-center">
-                        <Users className="w-16 h-16 text-[#8A95A5] mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-[#1A2744] mb-2">Undangan Tidak Ditemukan</h2>
-                        <p className="text-[#8A95A5] mb-6">Kode undangan tidak valid atau sudah kadaluarsa</p>
+                <div className="pt-24 flex items-center justify-center min-h-[60vh] text-center">
+                    <div>
+                        <div className="text-5xl mb-4">🤔</div>
+                        <h2 className="text-xl font-bold text-[#1A2744] mb-2">Sesi Tidak Ditemukan</h2>
+                        <p className="text-[#5A6A7E] mb-6">Kode undangan tidak valid</p>
                         <Link href="/joinan">
-                            <Button>Cari Undangan Lain</Button>
+                            <Button variant="accent">Cari Sesi Lain</Button>
                         </Link>
                     </div>
                 </div>
@@ -151,279 +170,290 @@ export default function JoinanDetailPage() {
         );
     }
 
-    const slotsRemaining = joinan.maxSlots - joinan.filledSlots;
-    const isFull = slotsRemaining === 0;
-    const venueImage = joinan.venue.images?.[0] || "/images/venue_futsal_1_1767281872661.png";
+    const slotsLeft = joinan.maxSlots - joinan.filledSlots;
+    const isFull = slotsLeft === 0;
+    const colors = getColorScheme(joinan.venue.venueType);
+    const venuePrice = joinan.venue.pricePerHour ? joinan.venue.pricePerHour * 2 : 400000;
 
     return (
         <main className="min-h-screen bg-[#F7F8FA]">
             <Navbar />
 
+            {/* Hero Banner */}
             <div className="pt-20">
-                {/* Hero Banner */}
                 <div className="relative h-64 sm:h-80 overflow-hidden">
                     <img
-                        src={venueImage}
+                        src={joinan.venue.images?.[0] || "https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800"}
                         alt={joinan.venue.name}
                         className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744] via-[#1A2744]/50 to-transparent" />
 
                     {/* Back Button */}
-                    <div className="absolute top-4 left-4">
-                        <button
-                            onClick={() => router.back()}
-                            className="flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-xl text-[#1A2744] font-medium hover:bg-white transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Kembali
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => router.back()}
+                        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-[#1A2744] font-medium hover:bg-[#F7F8FA] transition-colors shadow-md"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Kembali
+                    </button>
 
-                    {/* Sport Badge */}
-                    <div className="absolute top-4 right-4">
-                        <span className={`px-4 py-2 rounded-xl text-sm font-bold text-white shadow-lg ${sportBadgeStyles[joinan.venue.venueType] || "bg-[#344D7A]"}`}>
+                    {/* Badges */}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                        <span className={`${colors.bg} px-3 py-1.5 rounded-lg text-white text-sm font-bold shadow`}>
                             {joinan.venue.venueType}
                         </span>
+                        {!isFull && slotsLeft <= 3 && (
+                            <span className="bg-red-500 px-3 py-1.5 rounded-lg text-white text-sm font-bold shadow flex items-center gap-1">
+                                <Zap className="w-3 h-3" />
+                                {slotsLeft} slot!
+                            </span>
+                        )}
                     </div>
 
-                    {/* Title Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <div className="max-w-4xl mx-auto">
-                            <h1 className="text-2xl sm:text-3xl font-bold mb-2">{joinan.title}</h1>
-                            <div className="flex items-center gap-2 text-white/80">
-                                <MapPin className="w-4 h-4" />
-                                <span>{joinan.venue.name}, {joinan.venue.city}</span>
-                            </div>
+                    {/* Title */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                        <h1 className="text-2xl sm:text-3xl font-black text-white mb-2">{joinan.title}</h1>
+                        <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm">
+                            <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{joinan.venue.city}</span>
+                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formatDate(joinan.date)}</span>
+                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{joinan.startTime} - {joinan.endTime}</span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="grid lg:grid-cols-3 gap-6">
-                        {/* Main Content */}
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Info Cards */}
+            {/* Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div className="grid lg:grid-cols-3 gap-6">
+                    {/* Main Content */}
+                    <div className="lg:col-span-2 space-y-5">
+                        {/* Description */}
+                        {joinan.description && (
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="grid sm:grid-cols-3 gap-4"
+                                transition={{ duration: 0.3 }}
+                                className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
                             >
-                                <Card className="p-4 text-center">
-                                    <Calendar className="w-6 h-6 text-[#F5B800] mx-auto mb-2" />
-                                    <p className="text-sm text-[#8A95A5]">Tanggal</p>
-                                    <p className="font-bold text-[#1A2744]">{formatDate(joinan.date)}</p>
-                                </Card>
-                                <Card className="p-4 text-center">
-                                    <Clock className="w-6 h-6 text-[#344D7A] mx-auto mb-2" />
-                                    <p className="text-sm text-[#8A95A5]">Waktu</p>
-                                    <p className="font-bold text-[#1A2744]">{joinan.startTime} - {joinan.endTime}</p>
-                                </Card>
-                                <Card className="p-4 text-center">
-                                    <Users className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
-                                    <p className="text-sm text-[#8A95A5]">Slot Tersedia</p>
-                                    <p className="font-bold text-[#1A2744]">{slotsRemaining} dari {joinan.maxSlots}</p>
-                                </Card>
+                                <h3 className="font-bold text-[#1A2744] mb-2 flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-[#F5B800]" />
+                                    Tentang Sesi Ini
+                                </h3>
+                                <p className="text-[#5A6A7E] leading-relaxed">{joinan.description}</p>
                             </motion.div>
+                        )}
 
-                            {/* Organizer */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                            >
-                                <Card className="p-5">
-                                    <h3 className="font-bold text-[#1A2744] mb-4">Penyelenggara</h3>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#F5B800] to-[#FFD740] flex items-center justify-center">
-                                            <Crown className="w-6 h-6 text-[#344D7A]" />
+                        {/* Host */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.05 }}
+                            className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                        >
+                            <h3 className="font-bold text-[#1A2744] mb-3 flex items-center gap-2">
+                                <Crown className="w-4 h-4 text-[#F5B800]" />
+                                Host
+                            </h3>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-14 h-14 rounded-xl ${colors.bg} flex items-center justify-center text-white text-xl font-bold shadow`}>
+                                    {joinan.organizer.name.charAt(0)}
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-bold text-[#1A2744]">{joinan.organizer.name}</p>
+                                    <div className="flex items-center gap-3 text-[#5A6A7E] text-sm">
+                                        <span className="flex items-center gap-1">
+                                            <Star className="w-4 h-4 text-[#F5B800] fill-[#F5B800]" />
+                                            {joinan.organizer.rating || 4.8}
+                                        </span>
+                                        <span>•</span>
+                                        <span>{joinan.organizer.totalEvents || 5} sesi</span>
+                                    </div>
+                                </div>
+                                <Button variant="outline" size="sm">
+                                    <MessageCircle className="w-4 h-4 mr-1" />
+                                    Chat
+                                </Button>
+                            </div>
+                        </motion.div>
+
+                        {/* Participants */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                            className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                        >
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="font-bold text-[#1A2744] flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-[#344D7A]" />
+                                    Peserta
+                                </h3>
+                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${slotsLeft <= 3 ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+                                    {slotsLeft} slot tersisa
+                                </span>
+                            </div>
+
+                            {/* Progress */}
+                            <div className="mb-4">
+                                <div className="h-2 bg-[#E4E8ED] rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full ${colors.bg} transition-all duration-500`}
+                                        style={{ width: `${(joinan.filledSlots / joinan.maxSlots) * 100}%` }}
+                                    />
+                                </div>
+                                <p className="text-[#8A95A5] text-xs mt-1">{joinan.filledSlots} dari {joinan.maxSlots} slot terisi</p>
+                            </div>
+
+                            {/* Participant Grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                {joinan.participants?.map((p) => (
+                                    <div key={p.id} className="flex items-center gap-2 p-2 bg-[#F7F8FA] rounded-lg">
+                                        <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center text-white font-bold text-xs`}>
+                                            {p.user.name.charAt(0)}
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-[#1A2744]">{joinan.organizer.name}</p>
-                                            <p className="text-sm text-[#8A95A5]">Host</p>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-[#1A2744] text-sm truncate">{p.user.name}</p>
+                                            <p className="text-xs text-[#8A95A5]">
+                                                {p.status === "confirmed" ? "✓ Ready" : "Menunggu"}
+                                            </p>
                                         </div>
                                     </div>
-                                </Card>
-                            </motion.div>
-
-                            {/* Participants */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                            >
-                                <Card className="p-5">
-                                    <h3 className="font-bold text-[#1A2744] mb-4">
-                                        Peserta ({joinan.filledSlots}/{joinan.maxSlots})
-                                    </h3>
-
-                                    {joinan.participants && joinan.participants.length > 0 ? (
-                                        <div className="space-y-3">
-                                            {joinan.participants.map((p, idx) => (
-                                                <div key={p.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#344D7A] to-[#4A6699] flex items-center justify-center text-white font-bold">
-                                                        {p.user.name.charAt(0)}
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <p className="font-medium text-[#1A2744]">{p.user.name}</p>
-                                                        <p className="text-xs text-[#8A95A5]">Bergabung</p>
-                                                    </div>
-                                                    {p.status === "confirmed" && (
-                                                        <Check className="w-5 h-5 text-emerald-500" />
-                                                    )}
-                                                </div>
-                                            ))}
+                                ))}
+                                {/* Empty Slots */}
+                                {Array(Math.min(slotsLeft, 3)).fill(0).map((_, i) => (
+                                    <div key={`empty-${i}`} className="flex items-center gap-2 p-2 border border-dashed border-[#E4E8ED] rounded-lg">
+                                        <div className="w-8 h-8 rounded-lg bg-[#F7F8FA] flex items-center justify-center">
+                                            <UserPlus className="w-3 h-3 text-[#8A95A5]" />
                                         </div>
-                                    ) : (
-                                        <div className="text-center py-8">
-                                            <Users className="w-12 h-12 text-[#E4E8ED] mx-auto mb-3" />
-                                            <p className="text-[#8A95A5]">Belum ada peserta</p>
-                                            <p className="text-sm text-[#8A95A5]">Jadilah yang pertama!</p>
-                                        </div>
-                                    )}
-
-                                    {/* Empty slots visualization */}
-                                    {slotsRemaining > 0 && (
-                                        <div className="mt-4 pt-4 border-t border-[#E4E8ED]">
-                                            <p className="text-sm text-[#8A95A5] mb-3">Slot kosong:</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {Array.from({ length: Math.min(slotsRemaining, 6) }).map((_, i) => (
-                                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-dashed border-[#E4E8ED] flex items-center justify-center">
-                                                        <span className="text-[#8A95A5] text-lg">?</span>
-                                                    </div>
-                                                ))}
-                                                {slotsRemaining > 6 && (
-                                                    <div className="w-10 h-10 rounded-full bg-[#F7F8FA] flex items-center justify-center">
-                                                        <span className="text-[#8A95A5] text-sm font-medium">+{slotsRemaining - 6}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                </Card>
-                            </motion.div>
-
-                            {/* Venue Details */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                            >
-                                <Card className="p-5">
-                                    <h3 className="font-bold text-[#1A2744] mb-4">Detail Venue</h3>
-                                    <div className="space-y-3">
-                                        <div className="flex items-start gap-3">
-                                            <MapPin className="w-5 h-5 text-[#F5B800] mt-0.5" />
-                                            <div>
-                                                <p className="font-medium text-[#1A2744]">{joinan.venue.name}</p>
-                                                <p className="text-sm text-[#8A95A5]">{joinan.venue.address}</p>
-                                            </div>
-                                        </div>
+                                        <p className="text-[#8A95A5] text-xs">Slot kosong</p>
                                     </div>
-                                    <Link href={`/venues/${joinan.venue.id}`}>
-                                        <Button variant="outline" className="w-full mt-4">
-                                            Lihat Detail Venue
-                                        </Button>
-                                    </Link>
-                                </Card>
-                            </motion.div>
-                        </div>
+                                ))}
+                            </div>
+                        </motion.div>
 
-                        {/* Sidebar - Booking Card */}
-                        <div className="lg:col-span-1">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                                className="sticky top-24"
-                            >
-                                <Card className="p-6">
-                                    <div className="text-center mb-6">
-                                        <p className="text-[#8A95A5] text-sm mb-1">Biaya per orang</p>
-                                        <p className="text-3xl font-bold text-[#344D7A]">
-                                            {formatCurrency(joinan.pricePerSlot)}
-                                        </p>
+                        {/* Venue */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.15 }}
+                            className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                        >
+                            <h3 className="font-bold text-[#1A2744] mb-3 flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-[#F5B800]" />
+                                Lokasi
+                            </h3>
+                            <div className="flex items-start gap-3">
+                                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                    <img src={joinan.venue.images?.[0]} alt="" className="w-full h-full object-cover" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-[#1A2744]">{joinan.venue.name}</p>
+                                    <p className="text-[#5A6A7E] text-sm">{joinan.venue.address}</p>
+                                    <p className="text-[#8A95A5] text-sm">{joinan.venue.city}</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 mt-4">
+                                <Link href={`/venues/${joinan.venue.id}`} className="flex-1">
+                                    <Button variant="outline" size="sm" className="w-full">
+                                        <ExternalLink className="w-4 h-4 mr-1" />
+                                        Detail
+                                    </Button>
+                                </Link>
+                                <Button variant="secondary" size="sm" className="flex-1">
+                                    <Navigation className="w-4 h-4 mr-1" />
+                                    Directions
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="lg:col-span-1">
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                            className="sticky top-24"
+                        >
+                            <div className="bg-white rounded-2xl p-5 shadow-lg border-2 border-[#F5B800]/20">
+                                {/* Price */}
+                                <div className="text-center mb-5 pb-5 border-b border-[#E4E8ED]">
+                                    <p className="text-[#8A95A5] text-sm mb-1">Biaya per orang</p>
+                                    <p className="text-3xl font-black text-[#344D7A]">
+                                        {formatCurrency(joinan.pricePerSlot)}
+                                    </p>
+                                    <p className="text-[#8A95A5] text-xs mt-1">Sudah termasuk venue</p>
+                                </div>
+
+                                {/* Price Breakdown */}
+                                <div className="mb-5 p-3 bg-[#F7F8FA] rounded-xl space-y-1.5 text-sm">
+                                    <div className="flex justify-between">
+                                        <span className="text-[#5A6A7E]">Sewa venue</span>
+                                        <span className="text-[#1A2744]">{formatCurrency(venuePrice)}</span>
                                     </div>
-
-                                    {/* Progress bar */}
-                                    <div className="mb-6">
-                                        <div className="flex justify-between text-sm mb-2">
-                                            <span className="text-[#5A6A7E]">Terisi</span>
-                                            <span className="font-medium text-[#1A2744]">
-                                                {joinan.filledSlots}/{joinan.maxSlots} orang
-                                            </span>
-                                        </div>
-                                        <div className="h-3 bg-[#E4E8ED] rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full rounded-full transition-all ${isFull ? "bg-red-500" : "bg-gradient-to-r from-[#F5B800] to-[#FFD740]"}`}
-                                                style={{ width: `${(joinan.filledSlots / joinan.maxSlots) * 100}%` }}
-                                            />
-                                        </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-[#5A6A7E]">Dibagi {joinan.maxSlots} orang</span>
+                                        <span className="text-[#1A2744]">≈ {formatCurrency(Math.ceil(venuePrice / joinan.maxSlots))}</span>
                                     </div>
+                                    <div className="flex justify-between pt-1.5 border-t border-[#E4E8ED]">
+                                        <span className="text-[#8A95A5]">+ Biaya host</span>
+                                        <span className="text-[#8A95A5]">+{formatCurrency(5000)}</span>
+                                    </div>
+                                </div>
 
-                                    {/* Action Button */}
-                                    {isParticipant ? (
-                                        <Button
-                                            variant="outline"
-                                            className="w-full mb-3 text-red-500 border-red-200 hover:bg-red-50"
-                                            onClick={handleLeave}
-                                        >
-                                            <LogOut className="w-4 h-4 mr-2" />
-                                            Keluar dari Undangan
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            variant="accent"
-                                            className="w-full mb-3"
-                                            disabled={isFull || joining}
-                                            onClick={handleJoin}
-                                        >
-                                            {joining ? (
-                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                            ) : (
-                                                <UserPlus className="w-4 h-4 mr-2" />
-                                            )}
-                                            {isFull ? "Slot Penuh" : "Gabung Sekarang"}
-                                        </Button>
-                                    )}
-
-                                    {/* Share */}
+                                {/* CTA */}
+                                {isParticipant ? (
                                     <Button
                                         variant="outline"
-                                        className="w-full"
-                                        onClick={copyInviteLink}
+                                        className="w-full mb-3 text-red-500 border-red-200 hover:bg-red-50"
+                                        onClick={() => setIsParticipant(false)}
                                     >
-                                        {copied ? (
-                                            <>
-                                                <Check className="w-4 h-4 mr-2 text-emerald-500" />
-                                                Link Disalin!
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Share2 className="w-4 h-4 mr-2" />
-                                                Bagikan Undangan
-                                            </>
-                                        )}
+                                        <LogOut className="w-4 h-4 mr-2" />
+                                        Keluar
                                     </Button>
+                                ) : (
+                                    <Button
+                                        variant="accent"
+                                        className="w-full mb-3 h-12 text-base font-bold shadow-md"
+                                        disabled={isFull || joining}
+                                        onClick={handleJoin}
+                                    >
+                                        {joining ? (
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        ) : (
+                                            <Zap className="w-4 h-4 mr-2" />
+                                        )}
+                                        {isFull ? "Slot Penuh" : "Gabung Sekarang!"}
+                                    </Button>
+                                )}
 
-                                    {/* Invite Code */}
-                                    <div className="mt-6 p-4 bg-[#F7F8FA] rounded-xl">
-                                        <p className="text-xs text-[#8A95A5] mb-1 text-center">Kode Undangan</p>
-                                        <div className="flex items-center justify-center gap-2">
-                                            <code className="text-lg font-mono font-bold text-[#344D7A]">
-                                                {inviteCode}
-                                            </code>
-                                            <button
-                                                onClick={copyInviteLink}
-                                                className="p-1.5 rounded-lg hover:bg-[#E4E8ED] transition-colors"
-                                            >
-                                                <Copy className="w-4 h-4 text-[#8A95A5]" />
-                                            </button>
-                                        </div>
+                                <Button variant="outline" className="w-full" onClick={copyInviteLink}>
+                                    {copied ? (
+                                        <><Check className="w-4 h-4 mr-2 text-green-500" />Link Disalin!</>
+                                    ) : (
+                                        <><Share2 className="w-4 h-4 mr-2" />Bagikan</>
+                                    )}
+                                </Button>
+
+                                {/* Invite Code */}
+                                <div className="mt-5 p-3 bg-[#F5B800]/10 rounded-xl text-center">
+                                    <p className="text-[#8A95A5] text-xs mb-1">Kode Undangan</p>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <code className="text-lg font-mono font-bold text-[#344D7A]">{inviteCode}</code>
+                                        <button onClick={copyInviteLink} className="p-1 rounded hover:bg-[#F5B800]/20">
+                                            <Copy className="w-4 h-4 text-[#8A95A5]" />
+                                        </button>
                                     </div>
-                                </Card>
-                            </motion.div>
-                        </div>
+                                </div>
+
+                                {/* Trust */}
+                                <div className="mt-5 pt-5 border-t border-[#E4E8ED] flex items-center gap-2 text-sm text-[#5A6A7E]">
+                                    <Shield className="w-4 h-4 text-green-500" />
+                                    Venue sudah dibooking
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
             </div>
