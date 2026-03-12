@@ -3,7 +3,7 @@
   <p><strong>Platform booking lapangan olahraga dengan fitur Main Bareng (Joinan).</strong></p>
 
   <!-- Badges -->
-  <a href="https://github.com/xinnxz/kumpulmain.id/blob/main/LICENSE">
+  <a href="https://github.com/xinnxz/kumpulmain/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
   </a>
   <a href="https://nodejs.org/">
@@ -53,7 +53,7 @@ Pastikan Anda telah menginstal:
 Clone repositori ini dan instal semua dependensi untuk web dan api sekaligus:
 
 ```bash
-git clone https://github.com/xinnxz/kumpulmain.id.git
+git clone https://github.com/xinnxz/kumpulmain.git
 cd kumpulmain
 npm install
 ```
