@@ -92,6 +92,7 @@ export default function JoinanPage() {
     const [loading, setLoading] = useState(true);
     const [selectedSport, setSelectedSport] = useState("");
     const [mounted, setMounted] = useState(false);
+    const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -135,71 +136,137 @@ export default function JoinanPage() {
     if (!mounted) return null;
 
     return (
-        <main className="min-h-screen bg-[#F7F8FA]">
+        <main className="min-h-screen bg-[#F7F8FA] overflow-hidden">
             <Navbar />
 
-            {/* Hero Section - Light Animations Only */}
+            {/* Hero - Interactive Background */}
             <section className="relative pt-24 pb-16 overflow-hidden">
-                {/* Simple Static Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#F5B800]/5 via-transparent to-[#344D7A]/5" />
+                {/* Animated Background Blobs - Light & Subtle */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <motion.div
+                        animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute top-10 -left-20 w-[400px] h-[400px] rounded-full bg-[#F5B800]/20 blur-[80px]"
+                    />
+                    <motion.div
+                        animate={{ x: [0, -20, 0], y: [0, 30, 0] }}
+                        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full bg-[#344D7A]/20 blur-[60px]"
+                    />
+                    <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-purple-400/10 blur-[100px]"
+                    />
+                </div>
 
-                {/* Static Decorative Emojis (No Animation) */}
-                <div className="absolute top-32 right-[15%] text-5xl opacity-20 select-none">⚽</div>
-                <div className="absolute top-48 left-[10%] text-4xl opacity-15 select-none">🏀</div>
-                <div className="absolute bottom-20 right-[25%] text-3xl opacity-15 select-none">🏸</div>
+                {/* Floating Sport Emojis */}
+                <motion.div
+                    animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-32 right-[15%] text-6xl select-none pointer-events-none opacity-60"
+                >⚽</motion.div>
+                <motion.div
+                    animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute top-48 left-[10%] text-5xl select-none pointer-events-none opacity-60"
+                >🏀</motion.div>
+                <motion.div
+                    animate={{ y: [0, -15, 0], x: [0, 10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                    className="absolute bottom-20 right-[25%] text-4xl select-none pointer-events-none opacity-60"
+                >🏸</motion.div>
+                <motion.div
+                    animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    className="absolute top-60 right-[35%] text-3xl select-none pointer-events-none opacity-40"
+                >🎾</motion.div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Title */}
+                    {/* Title - Playful & Bold */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center mb-12"
                     >
-                        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white shadow-md border border-[#F5B800]/20 mb-6">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white shadow-lg shadow-[#F5B800]/10 border border-[#F5B800]/20 mb-6"
+                        >
                             <Sparkles className="w-4 h-4 text-[#F5B800]" />
                             <span className="text-sm font-medium text-[#344D7A]">Temukan teman main baru!</span>
-                        </div>
+                        </motion.div>
 
-                        <h1 className="text-5xl sm:text-6xl font-black mb-4 text-[#1A2744]">
-                            Gas <span className="text-[#F5B800]">Mabar!</span>
+                        <h1 className="text-5xl sm:text-7xl font-black mb-4 leading-tight text-[#1A2744]">
+                            Gas{" "}
+                            <span className="relative inline-block">
+                                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-[#F5B800] via-amber-400 to-[#F5B800]">
+                                    Mabar!
+                                </span>
+                                <motion.span
+                                    className="absolute -inset-2 blur-2xl bg-[#F5B800]/30 rounded-full"
+                                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                />
+                            </span>
                         </h1>
-                        <p className="text-lg text-[#5A6A7E] max-w-xl mx-auto">
-                            Main bareng, kenalan, patungan. <span className="text-[#344D7A] font-medium">Seru kan?</span>
+                        <p className="text-xl text-[#5A6A7E] max-w-xl mx-auto font-light">
+                            Main bareng, kenalan, patungan. <br />
+                            <span className="text-[#344D7A] font-medium">Seru kan?</span>
                         </p>
                     </motion.div>
 
                     {/* Sport Pills */}
-                    <div className="flex justify-center gap-3 flex-wrap mb-8">
-                        {sports.map((sport) => (
-                            <button
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="flex justify-center gap-3 flex-wrap mb-8"
+                    >
+                        {sports.map((sport, i) => (
+                            <motion.button
                                 key={sport.key}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.4 + i * 0.1 }}
                                 onClick={() => setSelectedSport(sport.key)}
-                                className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${selectedSport === sport.key
-                                        ? "bg-[#344D7A] text-white shadow-lg"
+                                className={`group relative px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-300 ${selectedSport === sport.key
+                                        ? "bg-[#344D7A] text-white shadow-lg shadow-[#344D7A]/30"
                                         : "bg-white text-[#5A6A7E] hover:bg-[#344D7A] hover:text-white shadow-md border border-[#E4E8ED]"
                                     }`}
                             >
                                 <span className="mr-2">{sport.emoji}</span>
                                 {sport.label}
-                            </button>
+                            </motion.button>
                         ))}
-                    </div>
+                    </motion.div>
 
                     {/* Stats */}
-                    <div className="flex justify-center gap-6 mb-8">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="flex justify-center gap-8"
+                    >
                         {[
                             { value: "500+", label: "Sesi", emoji: "🔥" },
                             { value: "10K+", label: "Pemain", emoji: "👥" },
                             { value: "4.9", label: "Rating", emoji: "⭐" },
                         ].map((stat, i) => (
-                            <div key={i} className="text-center bg-white rounded-xl px-5 py-3 shadow-md border border-[#E4E8ED]">
-                                <div className="text-xl mb-1">{stat.emoji}</div>
-                                <div className="text-xl font-bold text-[#344D7A]">{stat.value}</div>
+                            <motion.div
+                                key={i}
+                                whileHover={{ scale: 1.05 }}
+                                className="text-center bg-white rounded-2xl px-6 py-4 shadow-lg border border-[#E4E8ED]"
+                            >
+                                <div className="text-2xl mb-1">{stat.emoji}</div>
+                                <div className="text-2xl font-bold text-[#344D7A]">{stat.value}</div>
                                 <div className="text-xs text-[#8A95A5] uppercase tracking-wider">{stat.label}</div>
-                            </div>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -208,12 +275,14 @@ export default function JoinanPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Section Header */}
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-[#1A2744]">
-                            {loading ? "Loading..." : `${filtered.length} Sesi `}
-                            <span className="text-[#8A95A5] font-normal">tersedia</span>
-                        </h2>
+                        <div>
+                            <h2 className="text-2xl font-bold text-[#1A2744]">
+                                {loading ? "Loading..." : `${filtered.length} Sesi `}
+                                <span className="text-[#8A95A5] font-normal">tersedia</span>
+                            </h2>
+                        </div>
                         <Link href="/joinan/create">
-                            <Button variant="accent" className="shadow-md">
+                            <Button variant="accent" className="shadow-lg shadow-[#F5B800]/20">
                                 <Zap className="w-4 h-4 mr-2" />
                                 Buat Sesi
                             </Button>
@@ -234,38 +303,47 @@ export default function JoinanPage() {
                                 return (
                                     <motion.div
                                         key={inv.id}
-                                        initial={{ opacity: 0, y: 20 }}
+                                        initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.05, duration: 0.3 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        onHoverStart={() => setHoveredCard(inv.id)}
+                                        onHoverEnd={() => setHoveredCard(null)}
+                                        whileHover={{ y: -8 }}
                                     >
                                         <Link href={`/joinan/${inv.inviteCode}`}>
-                                            <div className="group bg-white rounded-2xl overflow-hidden shadow-md border border-[#E4E8ED] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                            <div className="group relative bg-white rounded-3xl overflow-hidden shadow-lg shadow-[#344D7A]/5 border border-[#E4E8ED] hover:shadow-xl hover:shadow-[#F5B800]/10 transition-all duration-500">
                                                 {/* Image Header */}
-                                                <div className="relative h-44 overflow-hidden">
+                                                <div className="relative h-48 overflow-hidden">
                                                     <div
-                                                        className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                                                         style={{ backgroundImage: `url(${inv.venue.images?.[0]})` }}
                                                     />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-[#1A2744]/80 via-transparent to-transparent" />
 
                                                     {/* Sport Badge */}
-                                                    <div className="absolute top-3 left-3">
-                                                        <div className={`${colors.bg} px-3 py-1.5 rounded-lg text-white font-bold text-xs shadow`}>
+                                                    <div className="absolute top-4 left-4">
+                                                        <div className={`${colors.bg} px-4 py-2 rounded-xl text-white font-bold text-sm shadow-lg`}>
                                                             {sports.find(s => s.key === inv.venue.venueType)?.emoji} {inv.venue.venueType}
                                                         </div>
                                                     </div>
 
                                                     {/* Hot Badge */}
                                                     {isHot && (
-                                                        <div className="absolute top-3 right-3 bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shadow">
-                                                            <Zap className="w-3 h-3" />
-                                                            HAMPIR PENUH
-                                                        </div>
+                                                        <motion.div
+                                                            animate={{ scale: [1, 1.1, 1] }}
+                                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                                            className="absolute top-4 right-4"
+                                                        >
+                                                            <div className="bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-lg">
+                                                                <Zap className="w-3 h-3" />
+                                                                HAMPIR PENUH
+                                                            </div>
+                                                        </motion.div>
                                                     )}
 
                                                     {/* Title */}
-                                                    <div className="absolute bottom-3 left-3 right-3">
-                                                        <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
+                                                    <div className="absolute bottom-4 left-4 right-4">
+                                                        <h3 className="text-xl font-bold text-white mb-1 line-clamp-1 group-hover:text-[#F5B800] transition-colors">
                                                             {inv.title}
                                                         </h3>
                                                         <div className="flex items-center gap-2 text-white/80 text-sm">
@@ -276,14 +354,14 @@ export default function JoinanPage() {
                                                 </div>
 
                                                 {/* Content */}
-                                                <div className="p-4">
+                                                <div className="p-5">
                                                     {/* Time & Date */}
-                                                    <div className="flex items-center gap-3 mb-4">
-                                                        <div className={`flex-1 ${colors.light} rounded-lg p-2.5 text-center`}>
+                                                    <div className="flex items-center gap-4 mb-4">
+                                                        <div className={`flex-1 ${colors.light} rounded-xl p-3 text-center`}>
                                                             <Calendar className={`w-4 h-4 ${colors.text} mx-auto mb-1`} />
                                                             <p className="text-[#1A2744] text-sm font-semibold">{formatDate(inv.date)}</p>
                                                         </div>
-                                                        <div className="flex-1 bg-[#F7F8FA] rounded-lg p-2.5 text-center">
+                                                        <div className="flex-1 bg-[#F7F8FA] rounded-xl p-3 text-center">
                                                             <Clock className="w-4 h-4 text-[#8A95A5] mx-auto mb-1" />
                                                             <p className="text-[#1A2744] text-sm font-semibold">{inv.startTime}</p>
                                                         </div>
@@ -291,25 +369,28 @@ export default function JoinanPage() {
 
                                                     {/* Participants */}
                                                     <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#E4E8ED]">
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex items-center gap-3">
                                                             <div className="flex -space-x-2">
-                                                                {Array(Math.min(inv.filledSlots, 3)).fill(0).map((_, i) => (
+                                                                {Array(Math.min(inv.filledSlots, 4)).fill(0).map((_, i) => (
                                                                     <div
                                                                         key={i}
-                                                                        className={`w-7 h-7 rounded-full border-2 border-white ${colors.bg} flex items-center justify-center text-white text-xs font-bold`}
+                                                                        className={`w-8 h-8 rounded-full border-2 border-white ${colors.bg} flex items-center justify-center text-white text-xs font-bold`}
                                                                     >
                                                                         {String.fromCharCode(65 + i)}
                                                                     </div>
                                                                 ))}
-                                                                {inv.filledSlots > 3 && (
-                                                                    <div className="w-7 h-7 rounded-full border-2 border-white bg-[#F7F8FA] flex items-center justify-center text-[#5A6A7E] text-xs font-bold">
-                                                                        +{inv.filledSlots - 3}
+                                                                {inv.filledSlots > 4 && (
+                                                                    <div className="w-8 h-8 rounded-full border-2 border-white bg-[#F7F8FA] flex items-center justify-center text-[#5A6A7E] text-xs font-bold">
+                                                                        +{inv.filledSlots - 4}
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <span className="text-[#5A6A7E] text-sm">{inv.filledSlots}/{inv.maxSlots}</span>
+                                                            <div>
+                                                                <p className="text-[#1A2744] text-sm font-medium">{inv.filledSlots}/{inv.maxSlots}</p>
+                                                                <p className="text-[#8A95A5] text-xs">bergabung</p>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center gap-1 text-sm">
+                                                        <div className="flex items-center gap-1 text-[#8A95A5] text-sm">
                                                             <Star className="w-4 h-4 text-[#F5B800] fill-[#F5B800]" />
                                                             <span className="font-medium text-[#1A2744]">{inv.organizer.rating || 4.8}</span>
                                                         </div>
@@ -318,14 +399,14 @@ export default function JoinanPage() {
                                                     {/* Price & CTA */}
                                                     <div className="flex items-center justify-between">
                                                         <div>
-                                                            <p className="text-[#8A95A5] text-xs">Per orang</p>
-                                                            <p className="text-xl font-bold text-[#344D7A]">
+                                                            <p className="text-[#8A95A5] text-xs uppercase tracking-wide">Per orang</p>
+                                                            <p className="text-2xl font-bold text-[#344D7A]">
                                                                 {formatCurrency(inv.pricePerSlot)}
                                                             </p>
                                                         </div>
-                                                        <Button variant="accent" size="sm">
+                                                        <Button variant="accent" className="shadow-md group-hover:shadow-lg transition-shadow">
                                                             Gabung
-                                                            <ArrowRight className="w-4 h-4 ml-1" />
+                                                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -336,9 +417,9 @@ export default function JoinanPage() {
                             })}
                         </div>
                     ) : (
-                        <div className="text-center py-20 bg-white rounded-2xl shadow-md border border-[#E4E8ED]">
-                            <div className="text-5xl mb-4">🎯</div>
-                            <h3 className="text-xl font-bold text-[#1A2744] mb-2">Belum ada sesi</h3>
+                        <div className="text-center py-20 bg-white rounded-3xl shadow-lg border border-[#E4E8ED]">
+                            <div className="text-6xl mb-4">🎯</div>
+                            <h3 className="text-2xl font-bold text-[#1A2744] mb-2">Belum ada sesi</h3>
                             <p className="text-[#5A6A7E] mb-6">Jadi yang pertama buat sesi main bareng!</p>
                             <Link href="/joinan/create">
                                 <Button variant="accent">
@@ -352,29 +433,47 @@ export default function JoinanPage() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-16 bg-gradient-to-br from-[#344D7A] to-[#1A2744]">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <div className="text-5xl mb-6">🚀</div>
-                    <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-                        Mau bikin sesi sendiri?
-                    </h2>
-                    <p className="text-lg text-white/60 mb-8">
-                        Booking venue, ajak teman, patungan. Simple!
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/venues">
-                            <Button size="lg" className="bg-white text-[#344D7A] hover:bg-white/90 px-8">
-                                <MapPin className="w-5 h-5 mr-2" />
-                                Cari Venue
-                            </Button>
-                        </Link>
-                        <Link href="/joinan/create">
-                            <Button size="lg" variant="accent" className="px-8">
-                                <Zap className="w-5 h-5 mr-2" />
-                                Buat Sesi
-                            </Button>
-                        </Link>
-                    </div>
+            <section className="relative py-20 overflow-hidden bg-gradient-to-br from-[#344D7A] to-[#1A2744]">
+                {/* Floating Elements */}
+                <motion.div
+                    animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
+                    transition={{ duration: 5, repeat: Infinity }}
+                    className="absolute top-10 left-[10%] text-5xl opacity-30"
+                >⚽</motion.div>
+                <motion.div
+                    animate={{ y: [0, 10, 0], rotate: [0, -5, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, delay: 1 }}
+                    className="absolute bottom-10 right-[15%] text-4xl opacity-30"
+                >🏀</motion.div>
+
+                <div className="relative max-w-4xl mx-auto px-4 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <div className="text-6xl mb-6">🚀</div>
+                        <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
+                            Mau bikin sesi sendiri?
+                        </h2>
+                        <p className="text-xl text-white/60 mb-8">
+                            Booking venue, ajak teman, patungan. Simple!
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Link href="/venues">
+                                <Button size="lg" className="bg-white text-[#344D7A] hover:bg-white/90 px-8">
+                                    <MapPin className="w-5 h-5 mr-2" />
+                                    Cari Venue
+                                </Button>
+                            </Link>
+                            <Link href="/joinan/create">
+                                <Button size="lg" variant="accent" className="px-8">
+                                    <Zap className="w-5 h-5 mr-2" />
+                                    Buat Sesi
+                                </Button>
+                            </Link>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 

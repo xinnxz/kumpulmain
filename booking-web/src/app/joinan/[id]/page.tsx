@@ -145,7 +145,7 @@ export default function JoinanDetailPage() {
             <main className="min-h-screen bg-[#F7F8FA]">
                 <Navbar />
                 <div className="pt-24 flex items-center justify-center min-h-[60vh]">
-                    <Loader2 className="w-10 h-10 animate-spin text-[#F5B800]" />
+                    <Loader2 className="w-12 h-12 animate-spin text-[#F5B800]" />
                 </div>
             </main>
         );
@@ -157,8 +157,8 @@ export default function JoinanDetailPage() {
                 <Navbar />
                 <div className="pt-24 flex items-center justify-center min-h-[60vh] text-center">
                     <div>
-                        <div className="text-5xl mb-4">🤔</div>
-                        <h2 className="text-xl font-bold text-[#1A2744] mb-2">Sesi Tidak Ditemukan</h2>
+                        <div className="text-6xl mb-4">🤔</div>
+                        <h2 className="text-2xl font-bold text-[#1A2744] mb-2">Sesi Tidak Ditemukan</h2>
                         <p className="text-[#5A6A7E] mb-6">Kode undangan tidak valid</p>
                         <Link href="/joinan">
                             <Button variant="accent">Cari Sesi Lain</Button>
@@ -179,9 +179,24 @@ export default function JoinanDetailPage() {
         <main className="min-h-screen bg-[#F7F8FA]">
             <Navbar />
 
-            {/* Hero Banner */}
-            <div className="pt-20">
-                <div className="relative h-64 sm:h-80 overflow-hidden">
+            {/* Hero */}
+            <div className="relative pt-20">
+                {/* Interactive Background */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <motion.div
+                        animate={{ x: [0, 20, 0], y: [0, -10, 0] }}
+                        transition={{ duration: 15, repeat: Infinity }}
+                        className="absolute top-20 left-[10%] w-[300px] h-[300px] rounded-full bg-[#F5B800]/15 blur-[60px]"
+                    />
+                    <motion.div
+                        animate={{ x: [0, -15, 0], y: [0, 15, 0] }}
+                        transition={{ duration: 12, repeat: Infinity }}
+                        className="absolute top-40 right-[20%] w-[200px] h-[200px] rounded-full bg-[#344D7A]/15 blur-[50px]"
+                    />
+                </div>
+
+                {/* Image Banner */}
+                <div className="relative h-72 sm:h-96 overflow-hidden">
                     <img
                         src={joinan.venue.images?.[0] || "https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800"}
                         alt={joinan.venue.name}
@@ -192,7 +207,7 @@ export default function JoinanDetailPage() {
                     {/* Back Button */}
                     <button
                         onClick={() => router.back()}
-                        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-[#1A2744] font-medium hover:bg-[#F7F8FA] transition-colors shadow-md"
+                        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl text-[#1A2744] font-medium hover:bg-[#F7F8FA] transition-all shadow-lg"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Kembali
@@ -200,21 +215,31 @@ export default function JoinanDetailPage() {
 
                     {/* Badges */}
                     <div className="absolute top-4 right-4 flex gap-2">
-                        <span className={`${colors.bg} px-3 py-1.5 rounded-lg text-white text-sm font-bold shadow`}>
+                        <span className={`${colors.bg} px-4 py-2 rounded-xl text-white text-sm font-bold shadow-lg`}>
                             {joinan.venue.venueType}
                         </span>
                         {!isFull && slotsLeft <= 3 && (
-                            <span className="bg-red-500 px-3 py-1.5 rounded-lg text-white text-sm font-bold shadow flex items-center gap-1">
+                            <motion.span
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                                className="bg-red-500 px-4 py-2 rounded-xl text-white text-sm font-bold shadow-lg flex items-center gap-1"
+                            >
                                 <Zap className="w-3 h-3" />
                                 {slotsLeft} slot!
-                            </span>
+                            </motion.span>
                         )}
                     </div>
 
                     {/* Title */}
-                    <div className="absolute bottom-4 left-4 right-4">
-                        <h1 className="text-2xl sm:text-3xl font-black text-white mb-2">{joinan.title}</h1>
-                        <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm">
+                    <div className="absolute bottom-6 left-6 right-6">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-3xl sm:text-4xl font-black text-white mb-2"
+                        >
+                            {joinan.title}
+                        </motion.h1>
+                        <div className="flex flex-wrap items-center gap-4 text-white/80">
                             <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{joinan.venue.city}</span>
                             <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formatDate(joinan.date)}</span>
                             <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{joinan.startTime} - {joinan.endTime}</span>
@@ -224,20 +249,19 @@ export default function JoinanDetailPage() {
             </div>
 
             {/* Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div className="grid lg:grid-cols-3 gap-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="grid lg:grid-cols-3 gap-8">
                     {/* Main Content */}
-                    <div className="lg:col-span-2 space-y-5">
+                    <div className="lg:col-span-2 space-y-6">
                         {/* Description */}
                         {joinan.description && (
                             <motion.div
-                                initial={{ opacity: 0, y: 15 }}
+                                initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                                className="bg-white rounded-3xl p-6 shadow-lg border border-[#E4E8ED]"
                             >
-                                <h3 className="font-bold text-[#1A2744] mb-2 flex items-center gap-2">
-                                    <Sparkles className="w-4 h-4 text-[#F5B800]" />
+                                <h3 className="font-bold text-lg text-[#1A2744] mb-3 flex items-center gap-2">
+                                    <Sparkles className="w-5 h-5 text-[#F5B800]" />
                                     Tentang Sesi Ini
                                 </h3>
                                 <p className="text-[#5A6A7E] leading-relaxed">{joinan.description}</p>
@@ -246,21 +270,21 @@ export default function JoinanDetailPage() {
 
                         {/* Host */}
                         <motion.div
-                            initial={{ opacity: 0, y: 15 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.05 }}
-                            className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                            transition={{ delay: 0.1 }}
+                            className="bg-white rounded-3xl p-6 shadow-lg border border-[#E4E8ED]"
                         >
-                            <h3 className="font-bold text-[#1A2744] mb-3 flex items-center gap-2">
-                                <Crown className="w-4 h-4 text-[#F5B800]" />
+                            <h3 className="font-bold text-lg text-[#1A2744] mb-4 flex items-center gap-2">
+                                <Crown className="w-5 h-5 text-[#F5B800]" />
                                 Host
                             </h3>
                             <div className="flex items-center gap-4">
-                                <div className={`w-14 h-14 rounded-xl ${colors.bg} flex items-center justify-center text-white text-xl font-bold shadow`}>
+                                <div className={`w-16 h-16 rounded-2xl ${colors.bg} flex items-center justify-center text-white text-2xl font-bold shadow-lg`}>
                                     {joinan.organizer.name.charAt(0)}
                                 </div>
                                 <div className="flex-1">
-                                    <p className="font-bold text-[#1A2744]">{joinan.organizer.name}</p>
+                                    <p className="font-bold text-lg text-[#1A2744]">{joinan.organizer.name}</p>
                                     <div className="flex items-center gap-3 text-[#5A6A7E] text-sm">
                                         <span className="flex items-center gap-1">
                                             <Star className="w-4 h-4 text-[#F5B800] fill-[#F5B800]" />
@@ -271,7 +295,7 @@ export default function JoinanDetailPage() {
                                     </div>
                                 </div>
                                 <Button variant="outline" size="sm">
-                                    <MessageCircle className="w-4 h-4 mr-1" />
+                                    <MessageCircle className="w-4 h-4 mr-2" />
                                     Chat
                                 </Button>
                             </div>
@@ -279,54 +303,59 @@ export default function JoinanDetailPage() {
 
                         {/* Participants */}
                         <motion.div
-                            initial={{ opacity: 0, y: 15 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.1 }}
-                            className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                            transition={{ delay: 0.2 }}
+                            className="bg-white rounded-3xl p-6 shadow-lg border border-[#E4E8ED]"
                         >
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-bold text-[#1A2744] flex items-center gap-2">
-                                    <Users className="w-4 h-4 text-[#344D7A]" />
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-bold text-lg text-[#1A2744] flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-[#344D7A]" />
                                     Peserta
                                 </h3>
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${slotsLeft <= 3 ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+                                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${slotsLeft <= 3 ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
                                     {slotsLeft} slot tersisa
                                 </span>
                             </div>
 
                             {/* Progress */}
-                            <div className="mb-4">
-                                <div className="h-2 bg-[#E4E8ED] rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full ${colors.bg} transition-all duration-500`}
-                                        style={{ width: `${(joinan.filledSlots / joinan.maxSlots) * 100}%` }}
+                            <div className="mb-6">
+                                <div className="h-3 bg-[#E4E8ED] rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${(joinan.filledSlots / joinan.maxSlots) * 100}%` }}
+                                        className={`h-full rounded-full ${colors.bg}`}
                                     />
                                 </div>
-                                <p className="text-[#8A95A5] text-xs mt-1">{joinan.filledSlots} dari {joinan.maxSlots} slot terisi</p>
+                                <p className="text-[#8A95A5] text-sm mt-2">{joinan.filledSlots} dari {joinan.maxSlots} slot terisi</p>
                             </div>
 
                             {/* Participant Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 {joinan.participants?.map((p) => (
-                                    <div key={p.id} className="flex items-center gap-2 p-2 bg-[#F7F8FA] rounded-lg">
-                                        <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center text-white font-bold text-xs`}>
+                                    <motion.div
+                                        key={p.id}
+                                        whileHover={{ scale: 1.02 }}
+                                        className="flex items-center gap-3 p-3 bg-[#F7F8FA] rounded-xl hover:bg-[#E4E8ED] transition-colors"
+                                    >
+                                        <div className={`w-10 h-10 rounded-xl ${colors.bg} flex items-center justify-center text-white font-bold text-sm`}>
                                             {p.user.name.charAt(0)}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-[#1A2744] text-sm truncate">{p.user.name}</p>
+                                            <p className="font-medium text-[#1A2744] truncate">{p.user.name}</p>
                                             <p className="text-xs text-[#8A95A5]">
                                                 {p.status === "confirmed" ? "✓ Ready" : "Menunggu"}
                                             </p>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
                                 {/* Empty Slots */}
-                                {Array(Math.min(slotsLeft, 3)).fill(0).map((_, i) => (
-                                    <div key={`empty-${i}`} className="flex items-center gap-2 p-2 border border-dashed border-[#E4E8ED] rounded-lg">
-                                        <div className="w-8 h-8 rounded-lg bg-[#F7F8FA] flex items-center justify-center">
-                                            <UserPlus className="w-3 h-3 text-[#8A95A5]" />
+                                {Array(Math.min(slotsLeft, 4)).fill(0).map((_, i) => (
+                                    <div key={`empty-${i}`} className="flex items-center gap-3 p-3 border-2 border-dashed border-[#F5B800]/30 rounded-xl bg-[#F5B800]/5">
+                                        <div className="w-10 h-10 rounded-xl bg-[#F5B800]/10 flex items-center justify-center">
+                                            <UserPlus className="w-4 h-4 text-[#F5B800]" />
                                         </div>
-                                        <p className="text-[#8A95A5] text-xs">Slot kosong</p>
+                                        <p className="text-[#F5B800] text-sm font-medium">Slot kosong</p>
                                     </div>
                                 ))}
                             </div>
@@ -334,17 +363,17 @@ export default function JoinanDetailPage() {
 
                         {/* Venue */}
                         <motion.div
-                            initial={{ opacity: 0, y: 15 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.15 }}
-                            className="bg-white rounded-2xl p-5 shadow-md border border-[#E4E8ED]"
+                            transition={{ delay: 0.3 }}
+                            className="bg-white rounded-3xl p-6 shadow-lg border border-[#E4E8ED]"
                         >
-                            <h3 className="font-bold text-[#1A2744] mb-3 flex items-center gap-2">
-                                <MapPin className="w-4 h-4 text-[#F5B800]" />
+                            <h3 className="font-bold text-lg text-[#1A2744] mb-4 flex items-center gap-2">
+                                <MapPin className="w-5 h-5 text-[#F5B800]" />
                                 Lokasi
                             </h3>
-                            <div className="flex items-start gap-3">
-                                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <div className="flex items-start gap-4">
+                                <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-md">
                                     <img src={joinan.venue.images?.[0]} alt="" className="w-full h-full object-cover" />
                                 </div>
                                 <div>
@@ -355,13 +384,13 @@ export default function JoinanDetailPage() {
                             </div>
                             <div className="flex gap-3 mt-4">
                                 <Link href={`/venues/${joinan.venue.id}`} className="flex-1">
-                                    <Button variant="outline" size="sm" className="w-full">
-                                        <ExternalLink className="w-4 h-4 mr-1" />
-                                        Detail
+                                    <Button variant="outline" className="w-full">
+                                        <ExternalLink className="w-4 h-4 mr-2" />
+                                        Detail Venue
                                     </Button>
                                 </Link>
-                                <Button variant="secondary" size="sm" className="flex-1">
-                                    <Navigation className="w-4 h-4 mr-1" />
+                                <Button variant="secondary" className="flex-1">
+                                    <Navigation className="w-4 h-4 mr-2" />
                                     Directions
                                 </Button>
                             </div>
@@ -371,23 +400,23 @@ export default function JoinanDetailPage() {
                     {/* Sidebar */}
                     <div className="lg:col-span-1">
                         <motion.div
-                            initial={{ opacity: 0, y: 15 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.1 }}
+                            transition={{ delay: 0.2 }}
                             className="sticky top-24"
                         >
-                            <div className="bg-white rounded-2xl p-5 shadow-lg border-2 border-[#F5B800]/20">
+                            <div className="bg-white rounded-3xl p-6 shadow-xl border-2 border-[#F5B800]/20">
                                 {/* Price */}
-                                <div className="text-center mb-5 pb-5 border-b border-[#E4E8ED]">
+                                <div className="text-center mb-6 pb-6 border-b border-[#E4E8ED]">
                                     <p className="text-[#8A95A5] text-sm mb-1">Biaya per orang</p>
-                                    <p className="text-3xl font-black text-[#344D7A]">
+                                    <p className="text-4xl font-black text-[#344D7A]">
                                         {formatCurrency(joinan.pricePerSlot)}
                                     </p>
-                                    <p className="text-[#8A95A5] text-xs mt-1">Sudah termasuk venue</p>
+                                    <p className="text-[#8A95A5] text-xs mt-2">Sudah termasuk venue</p>
                                 </div>
 
                                 {/* Price Breakdown */}
-                                <div className="mb-5 p-3 bg-[#F7F8FA] rounded-xl space-y-1.5 text-sm">
+                                <div className="mb-6 p-4 bg-gradient-to-r from-[#F7F8FA] to-[#F5B800]/5 rounded-xl space-y-2 text-sm">
                                     <div className="flex justify-between">
                                         <span className="text-[#5A6A7E]">Sewa venue</span>
                                         <span className="text-[#1A2744]">{formatCurrency(venuePrice)}</span>
@@ -396,7 +425,7 @@ export default function JoinanDetailPage() {
                                         <span className="text-[#5A6A7E]">Dibagi {joinan.maxSlots} orang</span>
                                         <span className="text-[#1A2744]">≈ {formatCurrency(Math.ceil(venuePrice / joinan.maxSlots))}</span>
                                     </div>
-                                    <div className="flex justify-between pt-1.5 border-t border-[#E4E8ED]">
+                                    <div className="flex justify-between pt-2 border-t border-[#E4E8ED]">
                                         <span className="text-[#8A95A5]">+ Biaya host</span>
                                         <span className="text-[#8A95A5]">+{formatCurrency(5000)}</span>
                                     </div>
@@ -415,14 +444,14 @@ export default function JoinanDetailPage() {
                                 ) : (
                                     <Button
                                         variant="accent"
-                                        className="w-full mb-3 h-12 text-base font-bold shadow-md"
+                                        className="w-full mb-3 h-14 text-lg font-bold shadow-lg shadow-[#F5B800]/30"
                                         disabled={isFull || joining}
                                         onClick={handleJoin}
                                     >
                                         {joining ? (
-                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                                         ) : (
-                                            <Zap className="w-4 h-4 mr-2" />
+                                            <Zap className="w-5 h-5 mr-2" />
                                         )}
                                         {isFull ? "Slot Penuh" : "Gabung Sekarang!"}
                                     </Button>
@@ -437,18 +466,18 @@ export default function JoinanDetailPage() {
                                 </Button>
 
                                 {/* Invite Code */}
-                                <div className="mt-5 p-3 bg-[#F5B800]/10 rounded-xl text-center">
+                                <div className="mt-6 p-4 bg-gradient-to-r from-[#F5B800]/10 to-transparent rounded-xl text-center">
                                     <p className="text-[#8A95A5] text-xs mb-1">Kode Undangan</p>
                                     <div className="flex items-center justify-center gap-2">
-                                        <code className="text-lg font-mono font-bold text-[#344D7A]">{inviteCode}</code>
-                                        <button onClick={copyInviteLink} className="p-1 rounded hover:bg-[#F5B800]/20">
+                                        <code className="text-xl font-mono font-bold text-[#344D7A]">{inviteCode}</code>
+                                        <button onClick={copyInviteLink} className="p-1.5 rounded-lg hover:bg-[#F5B800]/20">
                                             <Copy className="w-4 h-4 text-[#8A95A5]" />
                                         </button>
                                     </div>
                                 </div>
 
                                 {/* Trust */}
-                                <div className="mt-5 pt-5 border-t border-[#E4E8ED] flex items-center gap-2 text-sm text-[#5A6A7E]">
+                                <div className="mt-6 pt-6 border-t border-[#E4E8ED] flex items-center gap-2 text-sm text-[#5A6A7E]">
                                     <Shield className="w-4 h-4 text-green-500" />
                                     Venue sudah dibooking
                                 </div>
